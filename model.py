@@ -20,13 +20,15 @@ import csv
 #   convert_labels - converts each string label to a float to be processed
 
 # SYNOPSIS
-#   a_labels - list of labels determining if a team won ("W") or lost ("L") a given game
+#   a_labels:
+#   - list of labels determining if a team won ("W") or lost ("L") a given game
 
 # DESCRIPTION
-#   Iterates through each element in a_labels and creates a new list containing a float value that matches 
-#   the outcome of the game. 1.0 if the team won, 0.0 if the team lost.
+#   Iterates through each element in a_labels and creates a new list
+#   containing a float value that matches the outcome of the game.
+#   1.0 if the team won, 0.0 if the team lost.
 
-# RETURNS 
+# RETURNS
 #   Returns the newly converted floating point list of labels
 
 # AUTHOR
@@ -35,6 +37,7 @@ import csv
 # DATE
 #   6:13pm 1/28/19
 
+
 def convert_labels(a_labels):
     float_labels = []
     for label in a_labels:
@@ -42,24 +45,24 @@ def convert_labels(a_labels):
             float_labels.append(1.0)
         else:
             float_labels.append(0.0)
-    
+
     return float_labels
 
 ###
 # load_dataset()
 
 # NAME
-#   load_dataset - reads in csv dataset from local directory and slices necessary 
-#   statistics in order for the ML model to be trained and tested.
+#   load_dataset - reads in csv dataset from local directory and slices
+#   necessary statistics in order for the ML model to be trained and tested.
 
 # SYNOPSIS
 #   No args
 
 # DESCRIPTION
-#   Attempts to open csv file from local directory and reads 
+#   Attempts to open csv file from local directory and reads
 #   each line to lists in order to process through model.
 
-#   The statistics used currently for training/testing are differences in 
+#   The statistics used currently for training/testing are differences in
 #       - points
 #       - field goal percentage
 #       - 3 point shot percentage
@@ -76,14 +79,15 @@ def convert_labels(a_labels):
 # DATE
 #   5:50pm 1/27/19
 
-# 
+#
 ###
+
 
 def load_dataset():
     teams = []
     opponents = []
     stats = []
-    labels = [] # win/loss
+    labels = []
 
     with open('nba.games.stats.csv') as csv_file:
         read_csv = csv.reader(csv_file, delimiter=',')
@@ -92,15 +96,16 @@ def load_dataset():
             if line_count != 0:
                 teams.append(row[1])
                 opponents.append(row[5])
-                stats.append([(float(row[7])-float(row[8])), 
+                stats.append([
+                    (float(row[7])-float(row[8])),
                     (float(row[11])-float(row[27])),
                     (float(row[14])-float(row[30])),
                     (float(row[19])-float(row[35])),
                     (float(row[20])-float(row[36])),
                     (float(row[23])-float(row[39]))
-                    ])
+                ])
                 labels.append(row[6])
-            line_count+=1
+            line_count += 1
 
     csv_file.close()
 
@@ -109,7 +114,7 @@ def load_dataset():
         'opponents': opponents,
         'stats': stats,
         'labels': labels
-    } 
+    }
 
 ###
 # train_model()
@@ -122,8 +127,8 @@ def load_dataset():
 
 # DESCRIPTION
 #   - Takes the loaded dataset object and splits it into separate lists.
-#   - We then find the point to slice the data into training and testing sets to be processed
-#       by the model.
+#   - We then find the point to slice the data into training and testing sets
+#       to be processed by the model.
 #   - Print a dataframe table using the pandas package.
 #   - Data is then normalized.
 
@@ -136,8 +141,10 @@ def load_dataset():
 # DATE
 #   5:38PM 1/28/19
 
-# 
+#
 ###
+
+
 def train_model():
     # load in dataset and split into arrays
     dataset = load_dataset()
@@ -159,7 +166,7 @@ def train_model():
     train_data = np.array(stats[:slice_pt])
     char_train_labels = labels[:slice_pt]
     train_labels = convert_labels(char_train_labels)
-    
+
     test_team_names = teams[slice_pt:]
     test_opp_names = opponents[slice_pt:]
     test_data = np.array(stats[slice_pt:])
@@ -191,26 +198,31 @@ def train_model():
 
     def build_model():
         model = keras.Sequential([
-        keras.layers.Dense(64, activation=tf.nn.relu, 
-                            input_shape=(train_data.shape[1],)),
-        keras.layers.Dense(64, activation=tf.nn.relu),
-        keras.layers.Dense(1)
+            keras.layers.Dense(
+                64,
+                activation=tf.nn.relu,
+                input_shape=(train_data.shape[1],)
+            ),
+            keras.layers.Dense(64, activation=tf.nn.relu),
+            keras.layers.Dense(1)
         ])
 
         optimizer = tf.train.RMSPropOptimizer(0.001)
 
-        model.compile(loss='mse',
-                    optimizer=optimizer,
-                    metrics=['mae'])
+        model.compile(
+            loss='mse',
+            optimizer=optimizer,
+            metrics=['mae'])
         return model
 
     # model = build_model()
     # model.summary()
 
-    # Display training progress by printing a single dot for each completed epoch.
+    # Display training progress for each completed epoch.
     class PrintDot(keras.callbacks.Callback):
-        def on_epoch_end(self,epoch,logs):
-            if epoch % 100 == 0: print('')
+        def on_epoch_end(self, epoch, logs):
+            if epoch % 100 == 0:
+                print('')
             print('.', end='')
 
     EPOCHS = 200
@@ -228,18 +240,14 @@ def train_model():
 
     model = build_model()
 
-    # The patience parameter is the amount of epochs to check for improvement.
-    # early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
-
     # history = model.fit(train_data, train_labels, epochs=EPOCHS,
     #                     validation_split=0.2, verbose=0,
     #                     callbacks=[early_stop, PrintDot()])
 
-    #plot_history(history)
-
-    # Evaluate the model using the testing data and get the total loss as well as
-    # Mean Absolute Error - which is a common regression metric. In this case,
-    # it represents the average difference in prediction price to actual price.
+    # Evaluate the model using the testing data and get the total loss as well
+    # as Mean Absolute Error - which is a common regression metric.
+    # In this case, it represents the average difference
+    # in prediction price to actual price.
     [loss, mae] = model.evaluate(test_data, test_labels, verbose=0)
 
     print("\nTesting set Mean Abs Error: {:7.2f}".format(mae))
@@ -249,7 +257,8 @@ def train_model():
 
     df = pd.DataFrame(original_test_data, columns=column_names)
 
-    # Need to change output to print predictions mapped back to strings (W/L) based on rounded predictions.
+    # Need to change output to print predictions mapped back to strings (W/L)
+    # based on rounded predictions.
     df['OUTCOME'] = char_test_labels
     df['PREDICTION'] = test_predictions
     df.insert(0, 'TEAM', test_team_names)
@@ -257,10 +266,4 @@ def train_model():
 
     print(df.head(15))
 
-
-
 train_model()
-
-
-
-
