@@ -80,7 +80,7 @@ def convert_labels_to_float(a_labels):
 def convert_labels_to_str(a_labels):
     str_labels = []
     for label in a_labels:
-        if round(abs(label)) == 1.0:
+        if label > 0:
             str_labels.append("W")
         else:
             str_labels.append("L")
@@ -459,6 +459,8 @@ def train_model():
     df.insert(0, 'TEAM', test_team_names)
     df.insert(1, 'OPPONENT', test_opp_names)
 
-    print(df.head(50))
+    df_elements = df.sample(50)
+
+    print(df_elements)
 
 train_model()
