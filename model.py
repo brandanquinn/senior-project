@@ -200,6 +200,36 @@ def build_model(a_train_data):
         metrics=['mae'])
     return model
 
+###
+# measure_accuracy(a_scaled_predictons, a_labels)
+
+# NAME
+#   measure_accuracy - compares predictions to actual test data
+#   values to determine the accuracy of the model.
+
+# SYNOPSIS
+#   a_scaled_predictions:
+#   - list of scaled predictions values (rounded and converted back to W/L)
+#   a_labels:
+#   - list of actual win/loss results from test data
+
+# DESCRIPTION
+#   Iterates through the list of test data win/loss and
+#   compares each value to the neural network's predictions
+#   If the prediction == actual test data outcome,
+#   Adds a point to the accuracy score.
+#   Then, divide the score by the number of results
+#   and convert/display as accuracy percentage.
+
+# RETURNS
+#   None
+
+# AUTHOR
+#   Brandan Quinn
+
+# DATE
+#   10:21am 1/30/19
+
 
 def measure_accuracy(a_scaled_predictions, a_labels):
     score = 0
