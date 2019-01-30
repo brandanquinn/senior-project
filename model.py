@@ -59,7 +59,7 @@ def convert_labels_to_float(a_labels):
 # SYNOPSIS
 #   a_labels:
 #   - list containing float labels predicted by regression model,
-#       if the num rounds to 1.0, it is considered a win,
+#       if the num is positive, it is considered a win,
 #       else, the team was predicted to lose.
 
 # DESCRIPTION
@@ -416,7 +416,7 @@ def train_model():
                 print('')
             print('.', end='')
 
-    EPOCHS = 400
+    EPOCHS = 200
 
     # Store training stats
     # history = model.fit(train_data, train_labels, epochs=EPOCHS,
