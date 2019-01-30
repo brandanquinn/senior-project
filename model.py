@@ -58,7 +58,7 @@ def convert_labels_to_float(a_labels):
 
 # SYNOPSIS
 #   a_labels:
-#   - list containing float labels predicted by regression model, 
+#   - list containing float labels predicted by regression model,
 #       if the num rounds to 1.0, it is considered a win,
 #       else, the team was predicted to lose.
 
@@ -200,6 +200,16 @@ def build_model(a_train_data):
         metrics=['mae'])
     return model
 
+
+def measure_accuracy(a_scaled_predictions, a_labels):
+    score = 0
+    for i in range(len(a_labels)):
+        if a_scaled_predictions[i] == a_labels[i]:
+            score += 1
+    
+    print("Accuracy is: ", (score / len(a_labels)) * 100, "%")
+
+
 ###
 # load_dataset()
 
@@ -220,6 +230,7 @@ def build_model(a_train_data):
 #       - 3 point shot percentage
 #       - offensive rebounds
 #       - assists
+#       - steals
 #       - turnovers
 
 #   Also tracks location of games (home/away)
@@ -258,6 +269,7 @@ def load_dataset():
                     (float(row[14])-float(row[30])),
                     (float(row[18])-float(row[34])),
                     (float(row[20])-float(row[36])),
+                    (float(row[21])-float(row[37])),
                     (float(row[23])-float(row[39]))
                 ])
                 labels.append(row[6])
@@ -339,6 +351,7 @@ def train_model():
         '3PT%',
         'OREB',
         'ASSISTS',
+        'STEALS',
         'TURNOVERS'
     ]
 
@@ -402,6 +415,8 @@ def train_model():
     print("\nTesting set Mean Abs Error: {:7.2f}".format(mae))
 
     test_predictions = model.predict(test_data).flatten()
+    measure_accuracy(convert_labels_to_str(test_predictions), char_test_labels)
+
     # Need to make sure predictions remain on the scale from 0-1.
 
     df = pd.DataFrame(original_test_data, columns=column_names)
