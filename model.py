@@ -80,7 +80,7 @@ def convert_labels_to_float(a_labels):
 def convert_labels_to_str(a_labels):
     str_labels = []
     for label in a_labels:
-        if label > 0:
+        if round(abs(label)) == 1.0:
             str_labels.append("W")
         else:
             str_labels.append("L")
@@ -240,6 +240,24 @@ def measure_accuracy(a_scaled_predictions, a_labels):
     print("Accuracy is: ", (score / len(a_labels)) * 100, "%")
 
 
+# Graph to display model's improvement.
+def plot_history(history):
+    import matplotlib as mpl
+    mpl.use('TkAgg')
+    import matplotlib.pyplot as plt
+
+    plt.figure()
+    plt.xlabel('Epoch')
+    plt.ylabel('Mean Abs Error []')
+    plt.plot(history.epoch, np.array(history.history['mean_absolute_error']), 
+                label='Train Loss')
+    plt.plot(history.epoch, np.array(history.history['val_mean_absolute_error']),
+                label = 'Val loss')
+    plt.legend()
+    plt.ylim([0,5])
+    plt.show()
+
+
 ###
 # load_dataset()
 
@@ -353,7 +371,7 @@ def train_model():
     data = [teams, opponents, stats, labels]
 
     data_len = len(teams)
-    slice_pt = int(.7*data_len)
+    slice_pt = int(.8*data_len)
 
     # print("Elements of training data: ", train_slice)
     # print("Elements of testing data: ", test_slice)
@@ -423,17 +441,15 @@ def train_model():
     #                     validation_split=0.2, verbose=0,
     #                     callbacks=[PrintDot()])
 
-    import matplotlib as mpl
-    mpl.use('TkAgg')
-    import matplotlib.pyplot as plt
-
-    # plot_history(history)
-
     model = build_model(train_data)
 
-    # history = model.fit(train_data, train_labels, epochs=EPOCHS,
-    #                     validation_split=0.2, verbose=0,
-    #                     callbacks=[early_stop, PrintDot()])
+    early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
+
+    history = model.fit(train_data, train_labels, epochs=EPOCHS,
+                        validation_split=0.2, verbose=0,
+                        callbacks=[early_stop, PrintDot()])
+
+    plot_history(history)    
 
     # Evaluate the model using the testing data and get the total loss as well
     # as Mean Absolute Error - which is a common regression metric.
@@ -463,41 +479,22 @@ def train_model():
 
     print(df_elements)
 
-    game_stats = [[0.0, 3.1, .08, .02, -1.2, 1.9, -.7, .6]]
+    game_stats = [[0.0, 3.1, .08, .02, -1.2, 1.9, -.7, .6],
+                    [1.0, (112.4-111.5), (.462-.452), (.37-.355), (10.4-9.9), (26.1-23.7), (8.8-7.1), (13.0-12.3)]]
     test_game = np.array(game_stats)
 
     game_predict = model.predict(test_game).flatten()
 
-    measure_accuracy(convert_labels_to_str(game_predict), ["W"])
+    measure_accuracy(convert_labels_to_str(game_predict), ['W', 'W'])
 
     game_df = pd.DataFrame(game_stats, columns=column_names)
-    game_df['OUTCOME'] = ['W']
+    game_df['OUTCOME'] = ['W', 'W']
     game_df['PREDICTION'] = convert_labels_to_str(game_predict)
     game_df['FLOATPRED'] = game_predict
-    game_df.insert(0, 'TEAM', ['BUCKS'])
-    game_df.insert(1, 'OPPONENT', ['RAPTORS'])
+    game_df.insert(0, 'TEAM', ['BUCKS', 'CELTICS'])
+    game_df.insert(1, 'OPPONENT', ['RAPTORS', 'HORNETS'])
 
-    print(game_df.head(1))
-
-# BUCKS:
-
-# PPG: 117.2
-# FG%: .48
-# 3P%: .35
-# OREB: 9
-# AST: 26.3
-# STL: 7.7
-# TOV: 13.8
-
-# RAPS:
-
-# PPG: 114.1
-# FG%: .472
-# 3P%: .348
-# OREB: 10.2
-# AST: 24.4
-# STL: 8.4
-# TOV: 13.2
+    print(game_df.head(2))
 
 
 train_model()
