@@ -312,7 +312,7 @@ def load_dataset():
                 opponents.append(row[5])
                 stats.append([
                     convert_location_to_float(row[4]),
-                    (float(row[7])-float(row[8])),
+                    # (float(row[7])-float(row[8])),
                     (float(row[11])-float(row[27])),
                     (float(row[14])-float(row[30])),
                     (float(row[18])-float(row[34])),
@@ -394,7 +394,7 @@ def train_model():
 
     column_names = [
         'LOCFLOAT',
-        'POINTDIFF',
+        # 'POINTDIFF',
         'FG%',
         '3PT%',
         'OREB',
@@ -479,8 +479,8 @@ def train_model():
 
     print(df_elements)
 
-    game_stats = [[0.0, 3.1, .08, .02, -1.2, 1.9, -.7, .6],
-                    [1.0, (112.4-111.5), (.462-.452), (.37-.355), (10.4-9.9), (26.1-23.7), (8.8-7.1), (13.0-12.3)]]
+    game_stats = [[0.0, .08, .02, -1.2, 1.9, -.7, .6],
+                    [1.0, (.462-.452), (.37-.355), (10.4-9.9), (26.1-23.7), (8.8-7.1), (13.0-12.3)]]
     test_game = np.array(game_stats)
 
     game_predict = model.predict(test_game).flatten()
