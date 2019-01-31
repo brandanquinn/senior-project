@@ -185,10 +185,10 @@ def build_model(a_train_data):
     model = keras.Sequential([
         keras.layers.Dense(
             64,
-            activation=tf.nn.relu,
+            activation=tf.nn.relu6,
             input_shape=(a_train_data.shape[1],)
         ),
-        keras.layers.Dense(64, activation=tf.nn.relu),
+        keras.layers.Dense(64, activation=tf.nn.relu6),
         keras.layers.Dense(1)
     ])
 
@@ -462,5 +462,42 @@ def train_model():
     df_elements = df.sample(50)
 
     print(df_elements)
+
+    game_stats = [[0.0, 3.1, .08, .02, -1.2, 1.9, -.7, .6]]
+    test_game = np.array(game_stats)
+
+    game_predict = model.predict(test_game).flatten()
+
+    measure_accuracy(convert_labels_to_str(game_predict), ["W"])
+
+    game_df = pd.DataFrame(game_stats, columns=column_names)
+    game_df['OUTCOME'] = ['W']
+    game_df['PREDICTION'] = convert_labels_to_str(game_predict)
+    game_df['FLOATPRED'] = game_predict
+    game_df.insert(0, 'TEAM', ['BUCKS'])
+    game_df.insert(1, 'OPPONENT', ['RAPTORS'])
+
+    print(game_df.head(1))
+
+# BUCKS:
+
+# PPG: 117.2
+# FG%: .48
+# 3P%: .35
+# OREB: 9
+# AST: 26.3
+# STL: 7.7
+# TOV: 13.8
+
+# RAPS:
+
+# PPG: 114.1
+# FG%: .472
+# 3P%: .348
+# OREB: 10.2
+# AST: 24.4
+# STL: 8.4
+# TOV: 13.2
+
 
 train_model()
