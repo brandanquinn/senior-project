@@ -240,7 +240,31 @@ def measure_accuracy(a_scaled_predictions, a_labels):
     print("Accuracy is: ", (score / len(a_labels)) * 100, "%")
 
 
-# Graph to display model's improvement.
+###
+# plot_history(history)
+
+# NAME
+#   plot_history
+#   - Graph to display model's improvement.
+
+# SYNOPSIS
+#   history:
+#   - variable representing the state of the model and how well it learned throughout training.
+
+# DESCRIPTION
+#   Import matplotlib and pyplot to generate graph of training.
+#   Set up x and y axis, as well as variables to represent the model's error
+#   Display graph in separate window.
+
+# RETURNS
+#   None
+
+# AUTHOR
+#   Brandan Quinn
+
+# DATE
+#   5:37pm 1/31/19
+
 def plot_history(history):
     import matplotlib as mpl
     mpl.use('TkAgg')
@@ -254,7 +278,7 @@ def plot_history(history):
     plt.plot(history.epoch, np.array(history.history['val_mean_absolute_error']),
                 label = 'Val loss')
     plt.legend()
-    plt.ylim([0,5])
+    plt.ylim([0,1.5])
     plt.show()
 
 
@@ -479,6 +503,7 @@ def train_model():
 
     print(df_elements)
 
+    # Testing recent games as well as a prediction for a game tonight.
     game_stats = [[0.0, .08, .02, -1.2, 1.9, -.7, .6],
                     [1.0, (.462-.452), (.37-.355), (10.4-9.9), (26.1-23.7), (8.8-7.1), (13.0-12.3)]]
     test_game = np.array(game_stats)
