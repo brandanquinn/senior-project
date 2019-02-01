@@ -80,7 +80,7 @@ def convert_labels_to_float(a_labels):
 def convert_labels_to_str(a_labels):
     str_labels = []
     for label in a_labels:
-        if round(abs(label)) == 1.0:
+        if round(abs(label)) >= 1.0:
             str_labels.append("W")
         else:
             str_labels.append("L")
@@ -278,7 +278,7 @@ def plot_history(history):
     plt.plot(history.epoch, np.array(history.history['val_mean_absolute_error']),
                 label = 'Val loss')
     plt.legend()
-    plt.ylim([0,1.5])
+    plt.ylim([0,0.5])
     plt.show()
 
 
@@ -467,7 +467,7 @@ def train_model():
 
     model = build_model(train_data)
 
-    early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
+    early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=100)
 
     history = model.fit(train_data, train_labels, epochs=EPOCHS,
                         validation_split=0.2, verbose=0,
@@ -504,22 +504,21 @@ def train_model():
     print(df_elements)
 
     # Testing recent games as well as a prediction for a game tonight.
-    game_stats = [[0.0, .08, .02, -1.2, 1.9, -.7, .6],
-                    [1.0, (.462-.452), (.37-.355), (10.4-9.9), (26.1-23.7), (8.8-7.1), (13.0-12.3)]]
+    game_stats = [[0.0, (.462-.431), (.370-.339), (10.4-10.9), (26.1-19.7), (8.8-7.4), (13.5-13.7)]]
     test_game = np.array(game_stats)
 
     game_predict = model.predict(test_game).flatten()
 
-    measure_accuracy(convert_labels_to_str(game_predict), ['W', 'W'])
+    measure_accuracy(convert_labels_to_str(game_predict), ['W'])
 
     game_df = pd.DataFrame(game_stats, columns=column_names)
-    game_df['OUTCOME'] = ['W', 'W']
+    game_df['OUTCOME'] = ['W']
     game_df['PREDICTION'] = convert_labels_to_str(game_predict)
-    game_df['FLOATPRED'] = game_predict
-    game_df.insert(0, 'TEAM', ['BUCKS', 'CELTICS'])
-    game_df.insert(1, 'OPPONENT', ['RAPTORS', 'HORNETS'])
+    game_df['PERCENTCHANCE(%)'] = game_predict*100
+    game_df.insert(0, 'TEAM', ['CELTICS'])
+    game_df.insert(1, 'OPPONENT', ['KNICKS'])
 
-    print(game_df.head(2))
+    print(game_df.head(1))
 
 
 train_model()
