@@ -1,6 +1,6 @@
 import requests
 import json
-import datetime
+from datetime import datetime, timedelta
 
 # In order to get game stats:
 #   1. Need to generate todays date string
@@ -12,20 +12,31 @@ import datetime
 
 
 ###
-# get_todays_date()
+# get_yesterdays_date()
 
 # NAME
-#   get_todays_date
-#   - Generates a date string to get info for todays NBA games
+#   get_yesterdays_date
+#   - Generates a date string to get info for yesterdays NBA games
 
 # SYNOPSIS
 #   No args
 
 # DESCRIPTION
-#   - Uses python datetime library to generate a date object for today's date.
-#   - Since NBA api requires month and day to follow 2 digit format, 
-#       must convert month and day accordingly.
-#   - Returns concatenated string in necessary format.
+#   - Uses python datetime library to generate a date object for yesterday's date.
+
+# RETURNS
+#   Returns string in format: YYYYMMDD to be used in HTTP Requests
+
+# AUTHOR
+#   Brandan Quinn
+
+# DATE
+#   02/02/19 11:36am
+
+
+def get_yesterdays_date():
+    return datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+
 
 # RETURNS
 #   Returns string in format: YYYYMMDD to be used in HTTP Requests
@@ -36,9 +47,8 @@ import datetime
 # DATE
 #   02/01/19 1:49pm
 
-
 def get_todays_date():
-    d = datetime.datetime.today()
+    d = datetime.today()
     month = str(d.month)
     day = str(d.day)
     if len(month) < 2:
@@ -196,12 +206,18 @@ def generate_row(home_team, home_team_totals, away_team, away_team_totals):
 # DATE
 #   02/01/19 1:59pm
 
-def save_data(home_team, home_team_totals, away_team, away_team_totals):
+def save_data(home_team, home_team_totals, away_team, away_team_totals, input):
     import csv
     row = generate_row(home_team, home_team_totals, away_team, away_team_totals)
-    with open('nba.games.stats.csv', 'a') as csv_file:
-        wr = csv.writer(csv_file, dialect='excel')
-        wr.writerow(row)
+    if input == "predict":
+        with open('nba.live.predict.csv') as csv_file:
+            wr = csv.writer(csv_file, dialect='excel')
+            wr.writerow(row)
+    else:
+        with open('nba.games.stats.csv', 'a') as csv_file:
+            wr = csv.writer(csv_file, dialect='excel')
+            wr.writerow(row)
+        
 
 ###
 # get_stats(date_string, game_id, home_team, away_team)
@@ -235,20 +251,31 @@ def save_data(home_team, home_team_totals, away_team, away_team_totals):
 #   02/01/19 2:03pm
 
 
-def get_stats(date_string, game_id, home_team, away_team):
+def get_stats(date_string, game_id, home_team, away_team, input):
     box_score = requests.get('http://data.nba.net/prod/v1/' + date_string + '/' + game_id + '_boxscore.json')
     home_team_stats = box_score.json().get('stats').get('hTeam')
     away_team_stats = box_score.json().get('stats').get('vTeam')
     # print(home_team + ': ', box_score.json().get('stats').get('hTeam'))
     # print(away_team + ': ', box_score.json().get('stats').get('vTeam'))
 
-    save_data(home_team, home_team_stats.get('totals'), away_team, away_team_stats.get('totals'))
+    save_data(home_team, home_team_stats.get('totals'), away_team, away_team_stats.get('totals'), input)
 
 
-# today = get_todays_date()
-today = '20190131'
+user_input = input("(predict) or (gather) data? ")
+date = ''
 
-game_list = get_game_list(today)
+if user_input == "predict":
+    date = get_todays_date()
+elif user_input == "gather":
+    date = get_yesterdays_date()
+else:
+    print("Invalid input. Try again.")
+    exit()
+
+# today = '20190131'
+
+
+game_list = get_game_list(date)
 
 for game in game_list:
     # print(game.keys())
@@ -256,7 +283,7 @@ for game in game_list:
     away_team = game.get('vTeam').get('triCode')
     game_id = game.get('gameId')
     print('Checking game with id: ', game_id)
-    get_stats(today, game_id, home_team, away_team)
+    get_stats(date, game_id, home_team, away_team, user_input)
 
 
 

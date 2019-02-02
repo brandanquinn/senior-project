@@ -321,13 +321,13 @@ def plot_history(history):
 ###
 
 
-def load_dataset():
+def load_dataset(file_name):
     teams = []
     opponents = []
     stats = []
     labels = []
 
-    with open('nba.games.stats.csv') as csv_file:
+    with open(file_name) as csv_file:
         read_csv = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in read_csv:
@@ -387,7 +387,7 @@ def load_dataset():
 
 def train_model():
     # load in dataset and split into arrays
-    dataset = load_dataset()
+    dataset = load_dataset('nba.games.stats.csv')
     teams = dataset['teams']
     opponents = dataset['opponents']
     stats = dataset['stats']
@@ -504,21 +504,30 @@ def train_model():
     print(df_elements)
 
     # Testing recent games as well as a prediction for a game tonight.
-    game_stats = [[0.0, (.462-.431), (.370-.339), (10.4-10.9), (26.1-19.7), (8.8-7.4), (13.5-13.7)]]
-    test_game = np.array(game_stats)
 
-    game_predict = model.predict(test_game).flatten()
+    user_input = input("Would you like to see the prediction accuracy for yesterday's games? ")
 
-    measure_accuracy(convert_labels_to_str(game_predict), ['W'])
+    if user_input == "yes":
+        predict_dataset = load_dataset('nba.live.predict.csv')
+        live_teams = predict_dataset['teams']
+        live_opponents = predict_dataset['opponents']
+        live_stats = predict_dataset['stats']
+        live_labels = predict_dataset['labels']
+        live_data = [live_teams, live_opponents, live_stats, live_labels]
+        recent_games = np.array(live_stats)
 
-    game_df = pd.DataFrame(game_stats, columns=column_names)
-    game_df['OUTCOME'] = ['W']
-    game_df['PREDICTION'] = convert_labels_to_str(game_predict)
-    game_df['PERCENTCHANCE(%)'] = game_predict*100
-    game_df.insert(0, 'TEAM', ['CELTICS'])
-    game_df.insert(1, 'OPPONENT', ['KNICKS'])
+        game_predict = model.predict(recent_games).flatten()
 
-    print(game_df.head(1))
+        measure_accuracy(convert_labels_to_str(game_predict), live_labels)
+
+        game_df = pd.DataFrame(live_stats, columns=column_names)
+        game_df['OUTCOME'] = live_labels
+        game_df['PREDICTION'] = convert_labels_to_str(game_predict)
+        game_df['PERCENTCHANCE(%)'] = game_predict*100
+        game_df.insert(0, 'TEAM', live_teams)
+        game_df.insert(1, 'OPPONENT', live_opponents)
+
+        print(game_df.head(10))
 
 
 train_model()
