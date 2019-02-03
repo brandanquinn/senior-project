@@ -80,7 +80,7 @@ def convert_labels_to_float(a_labels):
 def convert_labels_to_str(a_labels):
     str_labels = []
     for label in a_labels:
-        if round(abs(label)) >= 1.0:
+        if round(label) >= 1.0:
             str_labels.append("W")
         else:
             str_labels.append("L")

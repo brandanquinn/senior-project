@@ -127,10 +127,12 @@ def generate_row(home_team, home_team_totals, away_team, away_team_totals):
     csv_row.append('Home')
     csv_row.append(away_team)
 
-    home_team_score = home_team_totals.get('points')
-    away_team_score = away_team_totals.get('points')
+    home_team_score = int(home_team_totals.get('points'))
+    away_team_score = int(away_team_totals.get('points'))
 
     outcome = ''
+
+    print(home_team, " vs. ", away_team, ": ", home_team_score, away_team_score)
 
     if home_team_score > away_team_score:
         outcome = 'W'
@@ -209,8 +211,9 @@ def generate_row(home_team, home_team_totals, away_team, away_team_totals):
 def save_data(home_team, home_team_totals, away_team, away_team_totals, input):
     import csv
     row = generate_row(home_team, home_team_totals, away_team, away_team_totals)
+    print(row)
     if input == "predict":
-        with open('nba.live.predict.csv') as csv_file:
+        with open('nba.live.predict.csv', 'a') as csv_file:
             wr = csv.writer(csv_file, dialect='excel')
             wr.writerow(row)
     else:
@@ -265,7 +268,7 @@ user_input = input("(predict) or (gather) data? ")
 date = ''
 
 if user_input == "predict":
-    date = get_todays_date()
+    date = get_yesterdays_date()
 elif user_input == "gather":
     date = get_yesterdays_date()
 else:
