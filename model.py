@@ -505,7 +505,7 @@ def train_model():
 
     # Testing recent games as well as a prediction for a game tonight.
 
-    user_input = input("Would you like to see the prediction accuracy for yesterday's games? ")
+    user_input = input("Would you like to see the predictions for today's games?")
 
     if user_input == "yes":
         predict_dataset = load_dataset('nba.live.predict.csv')
@@ -518,12 +518,22 @@ def train_model():
 
         game_predict = model.predict(recent_games).flatten()
 
-        measure_accuracy(convert_labels_to_str(game_predict), live_labels)
-
         game_df = pd.DataFrame(live_stats, columns=column_names)
-        game_df['OUTCOME'] = live_labels
         game_df['PREDICTION'] = convert_labels_to_str(game_predict)
-        game_df['PERCENTCHANCE(%)'] = game_predict*100
+        prediction_confidence = []
+        for prediction in game_predict:
+            if prediction >= 1.0:
+                prediction_confidence.append("High Confidence Win")
+            elif prediction <= 0.0:
+                prediction_confidence.append("High Confidence Loss")
+            elif prediction >= 0.6:
+                prediction_confidence.append("Medium Confidence Win")
+            elif prediction <= 0.4:
+                prediction_confidence.append("Medium Confidence Loss")
+            else:
+                prediction_confidence.append("Low Confidence")
+            
+        game_df['Confidence'] = prediction_confidence
         game_df.insert(0, 'TEAM', live_teams)
         game_df.insert(1, 'OPPONENT', live_opponents)
 

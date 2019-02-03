@@ -88,12 +88,12 @@ def get_game_list(date_string):
 
 
 ###
-# generate_row(home_team, home_team_totals, away_team, away_team_totals)
+# generate_row_for_games_played(home_team, home_team_totals, away_team, away_team_totals)
 
 # NAME
-#   generate_row
+#   generate_row_for_games_played
 #   - Using stat totals retrieved from NBA-API, generates a list of stats 
-#       following format of our dataset.
+#       following format of the dataset. Used specifically for games that have been already played.
 
 # SYNOPSIS
 #   home_team:
@@ -118,12 +118,12 @@ def get_game_list(date_string):
 
 # DATE
 #   02/01/19 1:56pm
-def generate_row(home_team, home_team_totals, away_team, away_team_totals):
+def generate_row_for_games_played(home_team, home_team_totals, away_team, away_team_totals):
     csv_row = []
     csv_row.append('0')
     csv_row.append(home_team)
     csv_row.append('')
-    csv_row.append(get_todays_date())
+    csv_row.append(get_yesterdays_date())
     csv_row.append('Home')
     csv_row.append(away_team)
 
@@ -179,6 +179,96 @@ def generate_row(home_team, home_team_totals, away_team, away_team_totals):
     return csv_row    
 
 ###
+# generate_row_with_season_averages(home_team, home_team_totals, away_team, away_team_totals)
+
+# NAME
+#   generate_row_with_season_averages
+#   - Using stat totals retrieved from NBA-API, generates a list of stats 
+#       following format of the dataset. Used specifically for games that have been already played.
+
+# SYNOPSIS
+#   home_team:
+#   - Three letter representation of home team.
+#   home_team_totals:
+#   - Dict containing stat totals for the home team.
+#   away_team:
+#   - Three letter representation of away team.
+#   away_team_totals:
+#   - Dict containing stat totals for the away team.
+
+# DESCRIPTION
+#   - In order to continue training Neural Network, I will need to add each game's stats
+#   to dataset. This function grabs each necessary stat and creates a list of them to be appended to csv dataset.
+#   - Follows the format of the csv file, omits some unncessary information for the project.
+
+# RETURNS
+#   List representing the row of stats to be written to csv dataset.
+
+# AUTHOR
+#   Brandan Quinn
+
+# DATE
+#   02/03/19 4:17pm
+def generate_row_with_season_averages(home_team, home_team_totals, away_team, away_team_totals):
+    home_team_score = float(home_team_totals.get('ppg').get('avg'))
+    away_team_score = float(away_team_totals.get('ppg').get('avg'))
+
+    outcome = ''
+
+    print(home_team, " vs. ", away_team, ": ", home_team_score, away_team_score)
+
+    if home_team_score > away_team_score:
+        outcome = 'W'
+    else:
+        outcome = 'L'
+
+    csv_row = [
+        '0',
+        home_team,
+        '',
+        get_todays_date(),
+        'Home',
+        away_team,
+        outcome,
+        home_team_score,
+        away_team_score,
+        'N/A',
+        'N/A',
+        home_team_totals.get('fgp').get('avg'),
+        'N/A',
+        'N/A',
+        home_team_totals.get('tpp').get('avg'),
+        'N/A',
+        'N/A',
+        'N/A',
+        home_team_totals.get('orpg').get('avg'),
+        home_team_totals.get('trpg').get('avg'),
+        home_team_totals.get('apg').get('avg'),
+        home_team_totals.get('spg').get('avg'),
+        home_team_totals.get('bpg').get('avg'),
+        home_team_totals.get('tpg').get('avg'),
+        home_team_totals.get('pfpg').get('avg'),
+        'N/A',
+        'N/A',
+        away_team_totals.get('fgp').get('avg'),
+        'N/A',
+        'N/A',
+        away_team_totals.get('tpp').get('avg'),
+        'N/A',
+        'N/A',
+        'N/A',
+        away_team_totals.get('orpg').get('avg'),
+        away_team_totals.get('trpg').get('avg'),
+        away_team_totals.get('apg').get('avg'),
+        away_team_totals.get('spg').get('avg'),
+        away_team_totals.get('bpg').get('avg'),
+        away_team_totals.get('tpg').get('avg'),
+        away_team_totals.get('pfpg').get('avg')
+    ]
+
+    return csv_row
+
+###
 # save_data(home_team, home_team_totals, away_team, away_team_totals)
 
 # NAME
@@ -210,17 +300,52 @@ def generate_row(home_team, home_team_totals, away_team, away_team_totals):
 
 def save_data(home_team, home_team_totals, away_team, away_team_totals, input):
     import csv
-    row = generate_row(home_team, home_team_totals, away_team, away_team_totals)
-    print(row)
     if input == "predict":
         with open('nba.live.predict.csv', 'a') as csv_file:
             wr = csv.writer(csv_file, dialect='excel')
+            row = generate_row_with_season_averages(home_team, home_team_totals, away_team, away_team_totals)
+            print(row)
             wr.writerow(row)
     else:
         with open('nba.games.stats.csv', 'a') as csv_file:
             wr = csv.writer(csv_file, dialect='excel')
+            row = generate_row_for_games_played(home_team, home_team_totals, away_team, away_team_totals)
+            print(row)
             wr.writerow(row)
+    
         
+###
+# find_team_stats(team_id, team_stats_list)
+
+# NAME
+#   find_team_stats
+#   - Given a specific team_id and a list of every team's season averages, return the season averages of team found with same id.
+
+# SYNOPSIS
+#   team_id:
+#   - team_id found from game to be played.
+#   team_stats_list:
+#   - List of season averages for every team in NBA, distinguished using team_id
+
+# DESCRIPTION
+#   - For each team's stats, find the stats that match given team_id
+
+# RETURNS
+#   Returns object containing team found's season averages.
+
+# AUTHOR
+#   Brandan Quinn
+
+# DATE
+#   2/3/19 4:13pm
+
+
+def find_team_stats(team_id, team_stats_list):
+    for team_stats in team_stats_list:
+        if team_stats.get("teamId") == team_id:
+            print(team_stats.get("teamId"), " == ", team_id)
+            print("Team found with stats: ", team_stats)
+            return team_stats        
 
 ###
 # get_stats(date_string, game_id, home_team, away_team)
@@ -254,21 +379,34 @@ def save_data(home_team, home_team_totals, away_team, away_team_totals, input):
 #   02/01/19 2:03pm
 
 
-def get_stats(date_string, game_id, home_team, away_team, input):
-    box_score = requests.get('http://data.nba.net/prod/v1/' + date_string + '/' + game_id + '_boxscore.json')
-    home_team_stats = box_score.json().get('stats').get('hTeam')
-    away_team_stats = box_score.json().get('stats').get('vTeam')
+def get_stats(game_obj, date_string, game_id, home_team, away_team, input):
+    if input == 'predict':
+        # get team season averages
+        home_team_id = game_obj.get('hTeam').get('teamId')
+        away_team_id = game_obj.get('vTeam').get('teamId')
+        season_stats = requests.get('http://data.nba.net/prod/v1/2018/team_stats_rankings.json')
+        team_stats_list = season_stats.json().get('league').get('standard').get('regularSeason').get('teams')
+        home_team_stats = find_team_stats(home_team_id, team_stats_list)
+        away_team_stats = find_team_stats(away_team_id, team_stats_list)
+        save_data(home_team, home_team_stats, away_team, away_team_stats, input)
+    else:
+        # get stats from games played
+        box_score = requests.get('http://data.nba.net/prod/v1/' + date_string + '/' + game_id + '_boxscore.json')
+        home_team_stats = box_score.json().get('stats').get('hTeam')
+        away_team_stats = box_score.json().get('stats').get('vTeam')
+        save_data(home_team, home_team_stats.get('totals'), away_team, away_team_stats.get('totals'), input)
     # print(home_team + ': ', box_score.json().get('stats').get('hTeam'))
     # print(away_team + ': ', box_score.json().get('stats').get('vTeam'))
 
-    save_data(home_team, home_team_stats.get('totals'), away_team, away_team_stats.get('totals'), input)
+
+
 
 
 user_input = input("(predict) or (gather) data? ")
 date = ''
 
 if user_input == "predict":
-    date = get_yesterdays_date()
+    date = get_todays_date()
 elif user_input == "gather":
     date = get_yesterdays_date()
 else:
@@ -286,7 +424,7 @@ for game in game_list:
     away_team = game.get('vTeam').get('triCode')
     game_id = game.get('gameId')
     print('Checking game with id: ', game_id)
-    get_stats(date, game_id, home_team, away_team, user_input)
+    get_stats(game, date, game_id, home_team, away_team, user_input)
 
 
 
