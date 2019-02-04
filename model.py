@@ -13,33 +13,32 @@ import numpy as np
 import json
 import csv
 
-###
-# convert_labels_to_float(labels)
-
-# NAME
-#   convert_labels_to_float:
-#   - converts each string label to a float to be processed
-
-# SYNOPSIS
-#   a_labels:
-#   - list of labels determining if a team won ("W") or lost ("L") a given game
-
-# DESCRIPTION
-#   Iterates through each element in a_labels and creates a new list
-#   containing a float value that matches the outcome of the game.
-#   1.0 if the team won, 0.0 if the team lost.
-
-# RETURNS
-#   Returns the newly converted floating point list of labels
-
-# AUTHOR
-#   Brandan Quinn
-
-# DATE
-#   6:13pm 1/28/19
-
-
 def convert_labels_to_float(a_labels):
+    ###
+    # convert_labels_to_float(labels)
+
+    # NAME
+    #   convert_labels_to_float:
+    #   - converts each string label to a float to be processed
+
+    # SYNOPSIS
+    #   a_labels:
+    #   - list of labels determining if a team won ("W") or lost ("L") a given game
+
+    # DESCRIPTION
+    #   Iterates through each element in a_labels and creates a new list
+    #   containing a float value that matches the outcome of the game.
+    #   1.0 if the team won, 0.0 if the team lost.
+
+    # RETURNS
+    #   Returns the newly converted floating point list of labels
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   6:13pm 1/28/19
+
     float_labels = []
     for label in a_labels:
         if label == "W":
@@ -49,35 +48,34 @@ def convert_labels_to_float(a_labels):
 
     return float_labels
 
-###
-# convert_labels_to_str(labels)
-
-# NAME
-#   convert_labels_to_str:
-#   - converts each float label to a str to be displayed as official prediction
-
-# SYNOPSIS
-#   a_labels:
-#   - list containing float labels predicted by regression model,
-#       if the num is positive, it is considered a win,
-#       else, the team was predicted to lose.
-
-# DESCRIPTION
-#   Iterates through each element in a_labels and creates a new list
-#   containing a string value that matches the outcome of the game.
-#   W if the team won, L if the team lost.
-
-# RETURNS
-#   Returns the newly converted string list of labels
-
-# AUTHOR
-#   Brandan Quinn
-
-# DATE
-#   10:12am 1/29/19
-
-
 def convert_labels_to_str(a_labels):
+    ###
+    # convert_labels_to_str(labels)
+
+    # NAME
+    #   convert_labels_to_str:
+    #   - converts each float label to a str to be displayed as official prediction
+
+    # SYNOPSIS
+    #   a_labels:
+    #   - list containing float labels predicted by regression model,
+    #       if the num is positive, it is considered a win,
+    #       else, the team was predicted to lose.
+
+    # DESCRIPTION
+    #   Iterates through each element in a_labels and creates a new list
+    #   containing a string value that matches the outcome of the game.
+    #   W if the team won, L if the team lost.
+
+    # RETURNS
+    #   Returns the newly converted string list of labels
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   10:12am 1/29/19
+
     str_labels = []
     for label in a_labels:
         if round(label) >= 1.0:
@@ -87,64 +85,62 @@ def convert_labels_to_str(a_labels):
 
     return str_labels
 
-###
-# convert_location_to_float(a_loc)
-
-# NAME
-#   convert_location_to_float
-#   - converts location of game (home/away) to float to be processed by model
-
-# SYNOPSIS
-#   a_loc:
-#   - location read in from dataset as a string
-
-# DESCRIPTION
-#   If location is home, return 1.0
-#   Else return 0.0
-
-# RETURNS
-#   Returns float based on conversion described above.
-
-# AUTHOR
-#   Brandan Quinn
-
-# DATE
-#   10:58am 1/29/19
-
-
 def convert_location_to_float(a_loc):
+    ###
+    # convert_location_to_float(a_loc)
+
+    # NAME
+    #   convert_location_to_float
+    #   - converts location of game (home/away) to float to be processed by model
+
+    # SYNOPSIS
+    #   a_loc:
+    #   - location read in from dataset as a string
+
+    # DESCRIPTION
+    #   If location is home, return 1.0
+    #   Else return 0.0
+
+    # RETURNS
+    #   Returns float based on conversion described above.
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   10:58am 1/29/19
+
     if a_loc == "Home":
         return 1.0
     else:
         return 0.0
 
-###
-# convert_location_to_str(a_loc)
-
-# NAME
-#   convert_location_to_str
-#   - converts floating point locations back to strings
-
-# SYNOPSIS
-#   a_loc:
-#   - list of floating point locations processsed by model
-
-# DESCRIPTION
-#   Iterates through a_loc to create new list.
-#   If element of a_loc is 1.0, add "Home" loc to new list.
-#   Else, add "Away" loc to new list
-
-# RETURNS
-#   Returns newly created list of stringified locations.
-
-# AUTHOR
-#   Brandan Quinn
-
-# DATE
-#   11:04am 1/29/19
-
-
 def convert_location_to_str(a_loc):
+    ###
+    # convert_location_to_str(a_loc)
+
+    # NAME
+    #   convert_location_to_str
+    #   - converts floating point locations back to strings
+
+    # SYNOPSIS
+    #   a_loc:
+    #   - list of floating point locations processsed by model
+
+    # DESCRIPTION
+    #   Iterates through a_loc to create new list.
+    #   If element of a_loc is 1.0, add "Home" loc to new list.
+    #   Else, add "Away" loc to new list
+
+    # RETURNS
+    #   Returns newly created list of stringified locations.
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   11:04am 1/29/19
+
     str_loc = []
     for loc in a_loc:
         if loc == 1.0:
@@ -154,34 +150,33 @@ def convert_location_to_str(a_loc):
 
     return str_loc
 
-###
-# build_model(a_train_data)
-
-# NAME
-#   build_model
-#   - Init a basic tensorflow logistic regression model and config
-
-# SYNOPSIS
-#   a_train_data
-#   - numpy array containing data sliced in order to train the model
-
-# DESCRIPTION
-#   Follows default tensorflow guidelines to initialize a Neural network
-#   Uses 70% of total data to train the network to evaluate statistics
-#   and predict whether or not the team in question will win their game.
-
-# RETURNS
-#   Returns the trained Neural Network to interact with and use for
-#   future predictions.
-
-# AUTHOR
-#   Brandan Quinn
-
-# DATE
-#   11:10am 1/29/19
-
-
 def build_model(a_train_data):
+    ###
+    # build_model(a_train_data)
+
+    # NAME
+    #   build_model
+    #   - Init a basic tensorflow logistic regression model and config
+
+    # SYNOPSIS
+    #   a_train_data
+    #   - numpy array containing data sliced in order to train the model
+
+    # DESCRIPTION
+    #   Follows default tensorflow guidelines to initialize a Neural network
+    #   Uses 70% of total data to train the network to evaluate statistics
+    #   and predict whether or not the team in question will win their game.
+
+    # RETURNS
+    #   Returns the trained Neural Network to interact with and use for
+    #   future predictions.
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   11:10am 1/29/19
+
     model = keras.Sequential([
         keras.layers.Dense(
             64,
@@ -200,38 +195,37 @@ def build_model(a_train_data):
         metrics=['mae'])
     return model
 
-###
-# measure_accuracy(a_scaled_predictons, a_labels)
-
-# NAME
-#   measure_accuracy - compares predictions to actual test data
-#   values to determine the accuracy of the model.
-
-# SYNOPSIS
-#   a_scaled_predictions:
-#   - list of scaled predictions values (rounded and converted back to W/L)
-#   a_labels:
-#   - list of actual win/loss results from test data
-
-# DESCRIPTION
-#   Iterates through the list of test data win/loss and
-#   compares each value to the neural network's predictions
-#   If the prediction == actual test data outcome,
-#   Adds a point to the accuracy score.
-#   Then, divide the score by the number of results
-#   and convert/display as accuracy percentage.
-
-# RETURNS
-#   None
-
-# AUTHOR
-#   Brandan Quinn
-
-# DATE
-#   10:21am 1/30/19
-
-
 def measure_accuracy(a_scaled_predictions, a_labels):
+    ###
+    # measure_accuracy(a_scaled_predictons, a_labels)
+
+    # NAME
+    #   measure_accuracy - compares predictions to actual test data
+    #   values to determine the accuracy of the model.
+
+    # SYNOPSIS
+    #   a_scaled_predictions:
+    #   - list of scaled predictions values (rounded and converted back to W/L)
+    #   a_labels:
+    #   - list of actual win/loss results from test data
+
+    # DESCRIPTION
+    #   Iterates through the list of test data win/loss and
+    #   compares each value to the neural network's predictions
+    #   If the prediction == actual test data outcome,
+    #   Adds a point to the accuracy score.
+    #   Then, divide the score by the number of results
+    #   and convert/display as accuracy percentage.
+
+    # RETURNS
+    #   None
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   10:21am 1/30/19
+
     score = 0
     for i in range(len(a_labels)):
         if a_scaled_predictions[i] == a_labels[i]:
@@ -239,33 +233,32 @@ def measure_accuracy(a_scaled_predictions, a_labels):
     
     print("Accuracy is: ", (score / len(a_labels)) * 100, "%")
 
-
-###
-# plot_history(history)
-
-# NAME
-#   plot_history
-#   - Graph to display model's improvement.
-
-# SYNOPSIS
-#   history:
-#   - variable representing the state of the model and how well it learned throughout training.
-
-# DESCRIPTION
-#   Import matplotlib and pyplot to generate graph of training.
-#   Set up x and y axis, as well as variables to represent the model's error
-#   Display graph in separate window.
-
-# RETURNS
-#   None
-
-# AUTHOR
-#   Brandan Quinn
-
-# DATE
-#   5:37pm 1/31/19
-
 def plot_history(history):
+    ###
+    # plot_history(history)
+
+    # NAME
+    #   plot_history
+    #   - Graph to display model's improvement.
+
+    # SYNOPSIS
+    #   history:
+    #   - variable representing the state of the model and how well it learned throughout training.
+
+    # DESCRIPTION
+    #   Import matplotlib and pyplot to generate graph of training.
+    #   Set up x and y axis, as well as variables to represent the model's error
+    #   Display graph in separate window.
+
+    # RETURNS
+    #   None
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   5:37pm 1/31/19
+
     import matplotlib as mpl
     mpl.use('TkAgg')
     import matplotlib.pyplot as plt
@@ -281,47 +274,45 @@ def plot_history(history):
     plt.ylim([0,0.5])
     plt.show()
 
-
-###
-# load_dataset()
-
-# NAME
-#   load_dataset - reads in csv dataset from local directory and slices
-#   necessary statistics in order for the ML model to be trained and tested.
-
-# SYNOPSIS
-#   No args
-
-# DESCRIPTION
-#   Attempts to open csv file from local directory and reads
-#   each line to lists in order to process through model.
-
-#   The statistics used currently for training/testing are differences in
-#       - points
-#       - field goal percentage
-#       - 3 point shot percentage
-#       - offensive rebounds
-#       - assists
-#       - steals
-#       - turnovers
-
-#   Also tracks location of games (home/away)
-#   And converts the strings to floats to be processed.
-
-# RETURNS
-#   Returns a json object containing the data read in from the file
-
-# AUTHOR
-#   Brandan Quinn
-
-# DATE
-#   5:50pm 1/27/19
-
-#
-###
-
-
 def load_dataset(file_name):
+    ###
+    # load_dataset()
+
+    # NAME
+    #   load_dataset - reads in csv dataset from local directory and slices
+    #   necessary statistics in order for the ML model to be trained and tested.
+
+    # SYNOPSIS
+    #   No args
+
+    # DESCRIPTION
+    #   Attempts to open csv file from local directory and reads
+    #   each line to lists in order to process through model.
+
+    #   The statistics used currently for training/testing are differences in
+    #       - points
+    #       - field goal percentage
+    #       - 3 point shot percentage
+    #       - offensive rebounds
+    #       - assists
+    #       - steals
+    #       - turnovers
+
+    #   Also tracks location of games (home/away)
+    #   And converts the strings to floats to be processed.
+
+    # RETURNS
+    #   Returns a json object containing the data read in from the file
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   5:50pm 1/27/19
+
+    #
+    ###
+
     teams = []
     opponents = []
     stats = []
@@ -356,36 +347,35 @@ def load_dataset(file_name):
         'labels': labels
     }
 
-###
-# train_model()
-
-# NAME
-#   train_model - Prepares the data to be processed by the ML model.
-
-# SYNOPSIS
-#   No args
-
-# DESCRIPTION
-#   - Takes the loaded dataset object and splits it into separate lists.
-#   - We then find the point to slice the data into training and testing sets
-#       to be processed by the model.
-#   - Print a dataframe table using the pandas package.
-#   - Data is then normalized.
-
-# RETURNS
-#   None
-
-# AUTHOR
-#   Brandan Quinn
-
-# DATE
-#   5:38PM 1/28/19
-
-#
-###
-
-
 def train_model():
+    ###
+    # train_model()
+
+    # NAME
+    #   train_model - Prepares the data to be processed by the ML model.
+
+    # SYNOPSIS
+    #   No args
+
+    # DESCRIPTION
+    #   - Takes the loaded dataset object and splits it into separate lists.
+    #   - We then find the point to slice the data into training and testing sets
+    #       to be processed by the model.
+    #   - Print a dataframe table using the pandas package.
+    #   - Data is then normalized.
+
+    # RETURNS
+    #   None
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   5:38PM 1/28/19
+
+    #
+    ###
+
     # load in dataset and split into arrays
     dataset = load_dataset('nba.games.stats.csv')
     teams = dataset['teams']
