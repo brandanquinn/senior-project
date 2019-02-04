@@ -406,29 +406,45 @@ def get_stats(game_obj, date_string, game_id, home_team, away_team, input):
     # print(home_team + ': ', box_score.json().get('stats').get('hTeam'))
     # print(away_team + ': ', box_score.json().get('stats').get('vTeam'))
 
-user_input = input("(predict) or (gather) data? ")
-date = ''
-
-if user_input == "predict":
+def predict():
     date = get_todays_date()
-elif user_input == "gather":
-    date = get_yesterdays_date()
-else:
-    print("Invalid input. Try again.")
-    exit()
+    game_list = get_game_list(date)
+
+    for game in game_list:
+        # print(game.keys())
+        home_team = game.get('hTeam').get('triCode')
+        away_team = game.get('vTeam').get('triCode')
+        game_id = game.get('gameId')
+        print('Checking game with id: ', game_id)
+        get_stats(game, date, game_id, home_team, away_team, "predict")
+
+# user_input = input("(predict) or (gather) data? ")
+# date = ''
+
+# if user_input == "predict":
+#     date = get_todays_date()
+# elif user_input == "gather":
+#     date = get_yesterdays_date()
+# else:
+#     print("Invalid input. Try again.")
+#     exit()
+
+# game_list = get_game_list(date)
+
+# for game in game_list:
+#     # print(game.keys())
+#     home_team = game.get('hTeam').get('triCode')
+#     away_team = game.get('vTeam').get('triCode')
+#     game_id = game.get('gameId')
+#     print('Checking game with id: ', game_id)
+#     get_stats(game, date, game_id, home_team, away_team, user_input)
+
+
 
 # today = '20190131'
 
 
-game_list = get_game_list(date)
 
-for game in game_list:
-    # print(game.keys())
-    home_team = game.get('hTeam').get('triCode')
-    away_team = game.get('vTeam').get('triCode')
-    game_id = game.get('gameId')
-    print('Checking game with id: ', game_id)
-    get_stats(game, date, game_id, home_team, away_team, user_input)
 
 
 

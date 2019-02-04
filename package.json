@@ -1,0 +1,19 @@
+{
+  "name": "senior-project",
+  "version": "1.0.0",
+  "description": "Predicting the outcome of NBA games using ML",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brandanquinn/senior-project.git"
+  },
+  "author": "Brandan Quinn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brandanquinn/senior-project/issues"
+  },
+  "homepage": "https://github.com/brandanquinn/senior-project#readme"
+}

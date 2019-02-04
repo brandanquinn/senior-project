@@ -13,6 +13,26 @@ import numpy as np
 import json
 import csv
 
+from flask import Flask
+from flask import request
+from flask import jsonify
+
+import utils
+import pandas as pd
+
+app = Flask(__name__)
+
+column_names = [
+    'LOCFLOAT',
+    # 'POINTDIFF',
+    'FG%',
+    '3PT%',
+    'OREB',
+    'ASSISTS',
+    'STEALS',
+    'TURNOVERS'
+]
+
 def convert_labels_to_float(a_labels):
     ###
     # convert_labels_to_float(labels)
@@ -347,6 +367,53 @@ def load_dataset(file_name):
         'labels': labels
     }
 
+def get_predictions(model):
+    predict_dataset = load_dataset('nba.live.predict.csv')
+    live_teams = predict_dataset['teams']
+    live_opponents = predict_dataset['opponents']
+    live_stats = predict_dataset['stats']
+    live_labels = predict_dataset['labels']
+    live_data = [live_teams, live_opponents, live_stats, live_labels]
+    recent_games = np.array(live_stats)
+
+    game_predict = model.predict(recent_games).flatten()
+
+    game_df = pd.DataFrame(live_stats, columns=column_names)
+    prediction_strs = convert_labels_to_str(game_predict)
+    game_df['PREDICTION'] = prediction_strs
+    prediction_confidence = []
+    for prediction in game_predict:
+        if prediction >= 1.0:
+            prediction_confidence.append("High Confidence Win")
+        elif prediction <= 0.0:
+            prediction_confidence.append("High Confidence Loss")
+        elif prediction >= 0.6:
+            prediction_confidence.append("Medium Confidence Win")
+        elif prediction <= 0.4:
+            prediction_confidence.append("Medium Confidence Loss")
+        else:
+            prediction_confidence.append("Low Confidence")
+        
+    game_df['Confidence'] = prediction_confidence
+    game_df.insert(0, 'TEAM', live_teams)
+    game_df.insert(1, 'OPPONENT', live_opponents)
+
+    print(game_df.head(10))
+
+    game_pred_obj_list = []
+
+    count = 0
+    for prediction in game_predict:
+        game_pred_obj_list.append({
+            'teams': live_teams[count] + ' vs. ' + live_opponents[count],
+            'predicted-outcome': prediction_strs[count],
+            'confidence': prediction_confidence[count]
+        })
+        count += 1
+
+    return game_pred_obj_list
+
+
 def train_model():
     ###
     # train_model()
@@ -404,18 +471,6 @@ def train_model():
     test_labels = convert_labels_to_float(char_test_labels)
 
     # create pandas dataframe to print sample data
-    import pandas as pd
-
-    column_names = [
-        'LOCFLOAT',
-        # 'POINTDIFF',
-        'FG%',
-        '3PT%',
-        'OREB',
-        'ASSISTS',
-        'STEALS',
-        'TURNOVERS'
-    ]
 
     df = pd.DataFrame(train_data, columns=column_names)
 
@@ -498,36 +553,16 @@ def train_model():
     user_input = input("Would you like to see the predictions for today's games?")
 
     if user_input == "yes":
-        predict_dataset = load_dataset('nba.live.predict.csv')
-        live_teams = predict_dataset['teams']
-        live_opponents = predict_dataset['opponents']
-        live_stats = predict_dataset['stats']
-        live_labels = predict_dataset['labels']
-        live_data = [live_teams, live_opponents, live_stats, live_labels]
-        recent_games = np.array(live_stats)
+        get_predictions(model)
 
-        game_predict = model.predict(recent_games).flatten()
+    return model
 
-        game_df = pd.DataFrame(live_stats, columns=column_names)
-        game_df['PREDICTION'] = convert_labels_to_str(game_predict)
-        prediction_confidence = []
-        for prediction in game_predict:
-            if prediction >= 1.0:
-                prediction_confidence.append("High Confidence Win")
-            elif prediction <= 0.0:
-                prediction_confidence.append("High Confidence Loss")
-            elif prediction >= 0.6:
-                prediction_confidence.append("Medium Confidence Win")
-            elif prediction <= 0.4:
-                prediction_confidence.append("Medium Confidence Loss")
-            else:
-                prediction_confidence.append("Low Confidence")
-            
-        game_df['Confidence'] = prediction_confidence
-        game_df.insert(0, 'TEAM', live_teams)
-        game_df.insert(1, 'OPPONENT', live_opponents)
+        
+persistent_model = train_model()
 
-        print(game_df.head(10))
-
-
-train_model()
+@app.route('/predict', methods=['GET', 'POST'])
+def predict_games():
+    if request.method == 'POST':
+        utils.predict()
+        predictions_to_return = get_predictions(persistent_model)
+        return jsonify(predictions=predictions_to_return)
