@@ -360,6 +360,11 @@ def load_dataset(file_name):
 
     csv_file.close()
 
+    # Empty prediction file after running through
+    f = open('nba.live.predict.csv', 'w+')
+    f.write('\n')
+    f.close()
+
     return {
         'teams': teams,
         'opponents': opponents,
@@ -550,19 +555,20 @@ def train_model():
 
     # Testing recent games as well as a prediction for a game tonight.
 
-    user_input = input("Would you like to see the predictions for today's games?")
+    # user_input = input("Would you like to see the predictions for today's games?")
 
-    if user_input == "yes":
-        get_predictions(model)
+    # if user_input == "yes":
+    #     get_predictions(model)
 
     return model
 
         
 persistent_model = train_model()
 
-@app.route('/predict', methods=['GET', 'POST'])
+@app.route('/predict', methods=['GET'])
 def predict_games():
-    if request.method == 'POST':
+    if request.method == 'GET':
         utils.predict()
         predictions_to_return = get_predictions(persistent_model)
+
         return jsonify(predictions=predictions_to_return)

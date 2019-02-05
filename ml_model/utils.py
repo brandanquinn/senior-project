@@ -1,14 +1,8 @@
+# Module to house functions that interact with the NBA-API, parse data from responses, and save that data to relevant csv file.
+
 import requests
 import json
 from datetime import datetime, timedelta
-
-# In order to get game stats:
-#   1. Need to generate todays date string
-#   2. Send request to 'http://data.nba.net/10s/prod/v1/{{date_string}}/scoreboard.json'
-#   3. Get list of games from response.json().get('games')
-#   4. For each element in games_list, game_id can be obtained from 'gameId' dict key
-#   5. With gameId, send request to: 'http://data.nba.net/prod/v1/{{date_string}}/{{game_id}}_boxscore.json'
-#   6. With response, pull of 'stats' key, and then 'hTeam'/'vTeam' keys to get individual team stats.
 
 def get_yesterdays_date():
     ###
@@ -149,44 +143,44 @@ def generate_row_for_games_played(home_team, home_team_totals, away_team, away_t
     else:
         outcome = 'L'
 
-    csv_row.append(outcome)
-    csv_row.append(home_team_score)
-    csv_row.append(away_team_score)
-    csv_row.append(home_team_totals.get('fgm'))
-    csv_row.append(home_team_totals.get('fga'))
-    csv_row.append(float(home_team_totals.get('fgp'))/100)
-    csv_row.append(home_team_totals.get('tpm'))
-    csv_row.append(home_team_totals.get('tpa'))
-    csv_row.append(float(home_team_totals.get('tpp'))/100)
-    csv_row.append(home_team_totals.get('ftm'))
-    csv_row.append(home_team_totals.get('fta'))
-    csv_row.append(float(home_team_totals.get('ftp'))/100)
-    csv_row.append(home_team_totals.get('offReb'))
-    csv_row.append(home_team_totals.get('totReb'))
-    csv_row.append(home_team_totals.get('assists'))
-    csv_row.append(home_team_totals.get('steals'))
-    csv_row.append(home_team_totals.get('blocks'))
-    csv_row.append(home_team_totals.get('turnovers'))
-    csv_row.append(home_team_totals.get('pFouls'))
-
-    csv_row.append(away_team_totals.get('fgm'))
-    csv_row.append(away_team_totals.get('fga'))
-    csv_row.append(float(away_team_totals.get('fgp'))/100)
-    csv_row.append(away_team_totals.get('tpm'))
-    csv_row.append(away_team_totals.get('tpa'))
-    csv_row.append(float(away_team_totals.get('tpp'))/100)
-    csv_row.append(away_team_totals.get('ftm'))
-    csv_row.append(away_team_totals.get('fta'))
-    csv_row.append(float(away_team_totals.get('ftp'))/100)
-    csv_row.append(away_team_totals.get('offReb'))
-    csv_row.append(away_team_totals.get('totReb'))
-    csv_row.append(away_team_totals.get('assists'))
-    csv_row.append(away_team_totals.get('steals'))
-    csv_row.append(away_team_totals.get('blocks'))
-    csv_row.append(away_team_totals.get('turnovers'))
-    csv_row.append(away_team_totals.get('pFouls'))
-
-    return csv_row    
+    # List formatted to be easily written to dataset.
+    return [
+        outcome,
+        home_team_score,
+        away_team_score,
+        home_team_totals.get('fgm'),
+        home_team_totals.get('fga'),
+        float(home_team_totals.get('fgp'))/100,
+        home_team_totals.get('tpm'),
+        home_team_totals.get('tpa'),
+        float(home_team_totals.get('tpp'))/100,
+        home_team_totals.get('ftm'),
+        home_team_totals.get('fta'),
+        float(home_team_totals.get('ftp'))/100,
+        home_team_totals.get('offReb'),
+        home_team_totals.get('totReb'),
+        home_team_totals.get('assists'),
+        home_team_totals.get('steals'),
+        home_team_totals.get('blocks'),
+        home_team_totals.get('turnovers'),
+        home_team_totals.get('pFouls'),
+        away_team_totals.get('fgm'),
+        away_team_totals.get('fga'),
+        float(away_team_totals.get('fgp'))/100,
+        away_team_totals.get('tpm'),
+        away_team_totals.get('tpa'),
+        float(away_team_totals.get('tpp'))/100,
+        away_team_totals.get('ftm'),
+        away_team_totals.get('fta'),
+        float(away_team_totals.get('ftp'))/100,
+        away_team_totals.get('offReb'),
+        away_team_totals.get('totReb'),
+        away_team_totals.get('assists'),
+        away_team_totals.get('steals'),
+        away_team_totals.get('blocks'),
+        away_team_totals.get('turnovers'),
+        away_team_totals.get('pFouls')
+    ]
 
 def generate_row_with_season_averages(home_team, home_team_totals, away_team, away_team_totals):
     ###
@@ -233,7 +227,7 @@ def generate_row_with_season_averages(home_team, home_team_totals, away_team, aw
     else:
         outcome = 'L'
 
-    csv_row = [
+    return [
         '0',
         home_team,
         '',
@@ -276,8 +270,6 @@ def generate_row_with_season_averages(home_team, home_team_totals, away_team, aw
         away_team_totals.get('tpg').get('avg'),
         away_team_totals.get('pfpg').get('avg')
     ]
-
-    return csv_row
 
 def save_data(home_team, home_team_totals, away_team, away_team_totals, input):
     ###
@@ -407,6 +399,33 @@ def get_stats(game_obj, date_string, game_id, home_team, away_team, input):
     # print(away_team + ': ', box_score.json().get('stats').get('vTeam'))
 
 def predict():
+    ###
+    # predict()
+    
+    # NAME
+    #   predict
+    #   - called by flask server to begin the game prediction process.
+
+    # SYNOPSIS
+    #   no args
+
+    # DESCRIPTION
+    #   - generates todays date formatted to use in API query
+    #   - uses date string to get list of games being played at date from NBA-API
+    #   - for each game:
+    #       - get home and away team names
+    #       - get unique game id
+    #       - use date string and game id to get the teams stats.
+
+    # RETURNS
+    #   none
+
+    # AUTHOR
+    #   Brandan Quinn
+
+    # DATE
+    #   2/5/19 4:05pm
+
     date = get_todays_date()
     game_list = get_game_list(date)
 
@@ -417,44 +436,3 @@ def predict():
         game_id = game.get('gameId')
         print('Checking game with id: ', game_id)
         get_stats(game, date, game_id, home_team, away_team, "predict")
-
-# user_input = input("(predict) or (gather) data? ")
-# date = ''
-
-# if user_input == "predict":
-#     date = get_todays_date()
-# elif user_input == "gather":
-#     date = get_yesterdays_date()
-# else:
-#     print("Invalid input. Try again.")
-#     exit()
-
-# game_list = get_game_list(date)
-
-# for game in game_list:
-#     # print(game.keys())
-#     home_team = game.get('hTeam').get('triCode')
-#     away_team = game.get('vTeam').get('triCode')
-#     game_id = game.get('gameId')
-#     print('Checking game with id: ', game_id)
-#     get_stats(game, date, game_id, home_team, away_team, user_input)
-
-
-
-# today = '20190131'
-
-
-
-
-
-
-
-# response = requests.get('http://data.nba.net/10s/prod/v1/20190131/scoreboard.json')
-
-# games_list = response.json().get('games')
-
-# game_id = games_list[0].get('gameId')
-# today = '20190131'
-
-
-# print(box_score.json().get('stats').get('hTeam'))

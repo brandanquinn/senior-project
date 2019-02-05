@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/brandanquinn/senior-project/issues"
   },
-  "homepage": "https://github.com/brandanquinn/senior-project#readme"
+  "homepage": "https://github.com/brandanquinn/senior-project#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "request": "^2.88.0"
+  }
 }
