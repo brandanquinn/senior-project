@@ -123,14 +123,6 @@ def generate_row_for_games_played(home_team, home_team_totals, away_team, away_t
     # DATE
     #   02/01/19 1:56pm
 
-    csv_row = []
-    csv_row.append('0')
-    csv_row.append(home_team)
-    csv_row.append('')
-    csv_row.append(get_yesterdays_date())
-    csv_row.append('Home')
-    csv_row.append(away_team)
-
     home_team_score = int(home_team_totals.get('points'))
     away_team_score = int(away_team_totals.get('points'))
 
@@ -145,6 +137,12 @@ def generate_row_for_games_played(home_team, home_team_totals, away_team, away_t
 
     # List formatted to be easily written to dataset.
     return [
+        '0',
+        home_team,
+        '',
+        get_yesterdays_date(),
+        'Home',
+        away_team,
         outcome,
         home_team_score,
         away_team_score,
@@ -398,7 +396,7 @@ def get_stats(game_obj, date_string, game_id, home_team, away_team, input):
     # print(home_team + ': ', box_score.json().get('stats').get('hTeam'))
     # print(away_team + ': ', box_score.json().get('stats').get('vTeam'))
 
-def predict():
+def predict(date):
     ###
     # predict()
     
@@ -426,7 +424,7 @@ def predict():
     # DATE
     #   2/5/19 4:05pm
 
-    date = get_todays_date()
+    # date = get_todays_date()
     game_list = get_game_list(date)
 
     for game in game_list:
@@ -435,4 +433,4 @@ def predict():
         away_team = game.get('vTeam').get('triCode')
         game_id = game.get('gameId')
         print('Checking game with id: ', game_id)
-        get_stats(game, date, game_id, home_team, away_team, "predict")
+        get_stats(game, date, game_id, home_team, away_team, 'predict')

@@ -523,7 +523,7 @@ def train_model():
                         validation_split=0.2, verbose=0,
                         callbacks=[early_stop, PrintDot()])
 
-    plot_history(history)    
+    # plot_history(history)    
 
     # Evaluate the model using the testing data and get the total loss as well
     # as Mean Absolute Error - which is a common regression metric.
@@ -565,10 +565,20 @@ def train_model():
         
 persistent_model = train_model()
 
-@app.route('/predict', methods=['GET'])
+@app.route('/predict', methods=['GET', 'POST'])
 def predict_games():
+    predictions_to_return = {}
+
+    print('Receiving: ', request.method, ' request from API.')
+
     if request.method == 'GET':
-        utils.predict()
+        utils.predict(utils.get_todays_date())
+        predictions_to_return = get_predictions(persistent_model)
+    # TODO: Implement POST request to retrieve other days predictions. 
+    elif request.method == 'POST':
+        date_string = request.get_json().get('date')
+        print('Date received: ', date_string)
+        utils.predict(date_string)
         predictions_to_return = get_predictions(persistent_model)
 
-        return jsonify(predictions=predictions_to_return)
+    return jsonify(predictions=predictions_to_return)
