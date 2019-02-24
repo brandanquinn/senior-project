@@ -49,7 +49,7 @@ app.get('/todays-games', (req, res) => {
  */
 app.get('/predict-by-date', (req, res) => {
     request
-    .post('http://127.0.0.1:5000/predict', { json: {date: '20190213'}})
+    .post('http://127.0.0.1:5000/predict', { json: {date: '20190223'}})
     .on('data', (chunk) => {
         const predictions_json = chunk.toString()
         res.send(predictions_json);

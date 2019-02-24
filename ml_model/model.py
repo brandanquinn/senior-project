@@ -243,7 +243,7 @@ def measure_accuracy(a_scaled_predictions, a_labels):
 
     score = 0
     for i in range(len(a_labels)):
-        if a_scaled_predictions[i] == a_labels[i]:
+        if round(a_scaled_predictions[i]) == a_labels[i]:
             score += 1
     
     print("Accuracy is: ", (score / len(a_labels)) * 100, "%")
@@ -350,7 +350,7 @@ def load_dataset(file_name):
                     (float(row[21])-float(row[37])),
                     (float(row[23])-float(row[39]))
                 ])
-                labels.append(row[6])
+                labels.append(float(row[7])-float(row[8]))
             line_count += 1
 
     csv_file.close()
@@ -379,22 +379,8 @@ def get_predictions(model):
     game_predict = model.predict(recent_games).flatten()
 
     game_df = pd.DataFrame(live_stats, columns=column_names)
-    prediction_strs = convert_labels_to_str(game_predict)
-    game_df['PREDICTION'] = prediction_strs
-    prediction_confidence = []
-    for prediction in game_predict:
-        if prediction >= 1.0:
-            prediction_confidence.append("High Confidence Win")
-        elif prediction <= 0.0:
-            prediction_confidence.append("High Confidence Loss")
-        elif prediction >= 0.6:
-            prediction_confidence.append("Medium Confidence Win")
-        elif prediction <= 0.4:
-            prediction_confidence.append("Medium Confidence Loss")
-        else:
-            prediction_confidence.append("Low Confidence")
+    game_df['POINTDIFF'] = game_predict
         
-    game_df['Confidence'] = prediction_confidence
     game_df.insert(0, 'TEAM', live_teams)
     game_df.insert(1, 'OPPONENT', live_opponents)
 
@@ -402,12 +388,19 @@ def get_predictions(model):
 
     game_pred_obj_list = []
 
+    outcomes = []
+    for val in game_predict:
+        if val > 0:
+            outcomes.append('W')
+        else:
+            outcomes.append('L')
+
     count = 0
     for prediction in game_predict:
         game_pred_obj_list.append({
             'teams': live_teams[count] + ' vs. ' + live_opponents[count],
-            'predicted-outcome': prediction_strs[count],
-            'confidence': prediction_confidence[count]
+            'predicted-outcome': outcomes[count],
+            'predicted-pointdiff': str(game_predict[count])
         })
         count += 1
 
@@ -461,20 +454,21 @@ def train_model():
     train_team_names = teams[:slice_pt]
     train_opp_names = opponents[:slice_pt]
     train_data = np.array(stats[:slice_pt])
-    char_train_labels = labels[:slice_pt]
-    train_labels = convert_labels_to_float(char_train_labels)
+    train_labels = labels[:slice_pt]
+    # char_train_labels = labels[:slice_pt]
+    # train_labels = convert_labels_to_float(char_train_labels)
 
     test_team_names = teams[slice_pt:]
     test_opp_names = opponents[slice_pt:]
     test_data = np.array(stats[slice_pt:])
-    char_test_labels = labels[slice_pt:]
-    test_labels = convert_labels_to_float(char_test_labels)
+    test_labels = labels[slice_pt:]
+    # char_test_labels = labels[slice_pt:]
+    # test_labels = convert_labels_to_float(char_test_labels)
 
     # create pandas dataframe to print sample data
 
     df = pd.DataFrame(train_data, columns=column_names)
 
-    df['OUTCOME'] = char_train_labels
     df['LABEL'] = train_labels
     df.insert(0, 'TEAM', train_team_names)
     df.insert(1, 'OPPONENT', train_opp_names)
@@ -530,7 +524,7 @@ def train_model():
     print("\nTesting set Mean Abs Error: {:7.2f}".format(mae))
 
     test_predictions = model.predict(test_data).flatten()
-    measure_accuracy(convert_labels_to_str(test_predictions), char_test_labels)
+    # measure_accuracy(test_predictions, test_labels)
 
     # Need to make sure predictions remain on the scale from 0-1.
 
@@ -538,8 +532,7 @@ def train_model():
 
     # Need to change output to print predictions mapped back to strings (W/L)
     # based on rounded predictions.
-    df['OUTCOME'] = char_test_labels
-    df['PREDICTION'] = convert_labels_to_str(test_predictions)
+    df['OUTCOME'] = test_labels
     df['FLOATPRED'] = test_predictions
     df.insert(0, 'TEAM', test_team_names)
     df.insert(1, 'OPPONENT', test_opp_names)
