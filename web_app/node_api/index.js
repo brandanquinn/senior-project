@@ -41,6 +41,8 @@ app.get('/todays-games', (req, res) => {
  *  The model then returns a list of predictions as JSON at given date as a response.
  *  These JSON responses are just printed to the web page without formatting for now.
  * 
+ *  Date string is currently sent as a query parameter.
+ * 
  * AUTHOR
  *  Brandan Quinn
  * 
@@ -48,8 +50,9 @@ app.get('/todays-games', (req, res) => {
  *  2/6/19 5:42pm 
  */
 app.get('/predict-by-date', (req, res) => {
+    let date = req.query.date;
     request
-    .post('http://127.0.0.1:5000/predict', { json: {date: '20190223'}})
+    .post('http://127.0.0.1:5000/predict', { json: {date}})
     .on('data', (chunk) => {
         const predictions_json = chunk.toString()
         res.send(predictions_json);
