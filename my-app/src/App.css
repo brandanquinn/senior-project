@@ -1,3 +1,7 @@
+body {
+  margin: 40px;
+}
+
 .App {
   text-align: center;
 }
@@ -17,6 +21,26 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.predictBox {
+  padding: 25px;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 300px 300px 300px;
+  grid-gap: 50px;
+  background-color: #fff;
+  color: #444;
+}
+
+.box {
+  background-color: #444;
+  color: #fff;
+  border-radius: 75px;
+  padding: 50px;
+  font-size: 150%;
 }
 
 .App-link {
