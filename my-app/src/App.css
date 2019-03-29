@@ -2,45 +2,23 @@ body {
   margin: 40px;
 }
 
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.predictBox {
-  padding: 25px;
-}
-
 .wrapper {
-  display: grid;
-  grid-template-columns: 300px 300px 300px;
-  grid-gap: 50px;
+  display: flex;                       /* establish flex container */
+  flex-wrap: wrap;                     /* enable flex items to wrap */
+  justify-content: space-around;
   background-color: #fff;
   color: #444;
 }
 
 .box {
-  background-color: #444;
-  color: #fff;
-  border-radius: 75px;
-  padding: 50px;
-  font-size: 150%;
+  flex: 0 0 32%;                       /* don't grow, don't shrink, width */
+  height: 50px;
+  margin-bottom: 5px;
+  background-color: #999;
+}
+
+.box:nth-child(3n) {
+  background-color: #F00;
 }
 
 .App-link {

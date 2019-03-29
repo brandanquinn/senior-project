@@ -24,7 +24,7 @@ class App extends Component {
     const PredictBox = ({game_preds}) => (
       <>
         {game_preds.map(game_pred => (
-          <div class="box predictBox">
+          <div class="box">
             <div class="teams" key={get(game_pred, 'teams')}>{get(game_pred, 'teams')}</div>
             <div class="outcome" key={get(game_pred, 'predicted-outcome')}>{get(game_pred, 'predicted-outcome')}</div>
             <div class="point-diff" key={get(game_pred, 'predicted-pointdiff')}>{get(game_pred, 'predicted-pointdiff')}</div>
@@ -34,9 +34,9 @@ class App extends Component {
     );
 
     return (
-      <div className="App">
+      <div>
         <div class="wrapper">
-          <p>{this.state.game_predictions ? <PredictBox game_preds={get(this.state.game_predictions, "predictions")}/> : "fuck"}</p>
+          {this.state.game_predictions ? <PredictBox game_preds={get(this.state.game_predictions, "predictions")}/> : "fuck"}
         </div>
         {/* <p>{typeof get(this.state.game_predictions, 'predictions')}</p> */}
         {/* <p>{JSON.stringify(get(this.state.game_predictions, 'predictions'))}</p> */}
