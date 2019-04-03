@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/brandanquinn/senior-project#readme",
   "dependencies": {
+    "bulma": "^0.7.4",
     "express": "^4.16.4",
     "request": "^2.88.0"
   }

@@ -1,12 +1,13 @@
 body {
   margin: 40px;
+  background-color: #102e4a;
 }
 
 .wrapper {
   display: flex;                       /* establish flex container */
   flex-wrap: wrap;                     /* enable flex items to wrap */
   justify-content: space-around;
-  background-color: #fff;
+  background-color: #102e4a;
   color: #444;
 }
 
@@ -14,15 +15,30 @@ body {
   flex: 0 0 32%;                       /* don't grow, don't shrink, width */
   height: 70px;
   margin-bottom: 5px;
-  background-color: #61dafb;
+  background-color: #5887ff;
+  color: white;
 }
 
 .box:nth-child(3n) {
-  background-color: #61dafb;
+  background-color: #5887ff;
+  color: white;
 }
 
 .App-link {
   color: #61dafb;
+}
+
+.Sitename {
+  color: #55c1ff;
+}
+
+.Navbar {
+  padding: 20px;
+}
+
+.Link {
+  padding: 10px;
+  color:#a682ff;
 }
 
 @keyframes App-logo-spin {
