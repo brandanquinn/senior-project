@@ -1,11 +1,15 @@
 const express = require('express');
 const request = require('request');
 
+const get = require('lodash/get');
+
+const {convert_prediction} = require('./utils/convert-predictions');
+
 const app = express();
 const port = process.env.PORT || 3001;
 
 /**
- * '/todays-games
+ * '/todays-games'
  * 
  * NAME
  *  '/todays-games'
@@ -26,7 +30,9 @@ app.get('/todays-games', (req, res) => {
     .get('http://127.0.0.1:5000/predict')
     .on('data', (chunk) => {
         const predictions_json = chunk.toString()
-        res.send(predictions_json);
+        // Need to pre-process json
+        const converted_predictions = get(JSON.parse(predictions_json), 'predictions').map(pred => convert_prediction(pred));
+        res.send(converted_predictions);
     })
     
 });
@@ -58,14 +64,16 @@ app.get('/predict-by-date', (req, res) => {
         .get('http://127.0.0.1:5000/predict')
         .on('data', (chunk) => {
             const predictions_json = chunk.toString()
-            res.send(predictions_json);
+            const converted_predictions = predictions_json.map(pred => convert_prediction(pred));
+            res.send(converted_predictions);
         })
     } else {
         request
         .post('http://127.0.0.1:5000/predict', { json: {date}})
         .on('data', (chunk) => {
             const predictions_json = chunk.toString()
-            res.send(predictions_json);
+            const converted_predictions = predictions_json.map(pred => convert_prediction(pred));
+            res.send(converted_predictions);
         })
     }
 })

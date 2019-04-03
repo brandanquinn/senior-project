@@ -398,7 +398,8 @@ def get_predictions(model):
     count = 0
     for prediction in game_predict:
         game_pred_obj_list.append({
-            'teams': live_teams[count] + ' vs. ' + live_opponents[count],
+            't1': live_teams[count],
+            't2': live_opponents[count],
             'predicted-outcome': outcomes[count],
             'predicted-pointdiff': str(game_predict[count])
         })
