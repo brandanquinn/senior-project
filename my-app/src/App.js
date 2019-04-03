@@ -12,34 +12,11 @@ class App extends Component {
 
     // this.handleChange = this.handleChange.bind(this);
   }
-  
-  componentDidMount() {
-    fetch('/todays-games')
-      // .then(res => res.json())
-      .then(res => res.json())
-      .then(game_predictions => this.setState( {game_predictions} ));
-  }
 
   render() {
-    const PredictBox = ({game_preds}) => (
-      <>
-        {game_preds.map(game_pred => (
-          <div class="box">
-            <div class="teams" key={get(game_pred, 'teams')}>{get(game_pred, 'teams')}</div>
-            <div class="outcome" key={get(game_pred, 'predicted-outcome')}>{get(game_pred, 'predicted-outcome')}</div>
-            <div class="point-diff" key={get(game_pred, 'predicted-pointdiff')}>{get(game_pred, 'predicted-pointdiff')}</div>
-          </div>
-        ))}
-      </>
-    );
-
     return (
       <div>
-        <div class="wrapper">
-          {this.state.game_predictions ? <PredictBox game_preds={get(this.state.game_predictions, "predictions")}/> : "fuck"}
-        </div>
-        {/* <p>{typeof get(this.state.game_predictions, 'predictions')}</p> */}
-        {/* <p>{JSON.stringify(get(this.state.game_predictions, 'predictions'))}</p> */}
+        <p>Home Page</p>
       </div>
       
     );

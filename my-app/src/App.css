@@ -12,13 +12,13 @@ body {
 
 .box {
   flex: 0 0 32%;                       /* don't grow, don't shrink, width */
-  height: 50px;
+  height: 70px;
   margin-bottom: 5px;
-  background-color: #999;
+  background-color: #61dafb;
 }
 
 .box:nth-child(3n) {
-  background-color: #F00;
+  background-color: #61dafb;
 }
 
 .App-link {
