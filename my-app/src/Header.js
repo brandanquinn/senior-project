@@ -24,9 +24,9 @@ const Header = () => (
     <header class="Navbar">
         <h1 class="Sitename">QML NBA Predictions</h1>
         <hr /> 
-        <NavLink to="/" class="Link" exact={true}>Home Page</NavLink>
-        <NavLink to="/todays-games" class="Link">Todays Predictions</NavLink>
-        <NavLink to="/predict-by-date" class="Link">Predictions By Date</NavLink>
+        <NavLink to="/" activeClassName="Link" class="Link" exact={true}>Home Page</NavLink>
+        <NavLink to="/todays-games" activeClassName="Link" class="Link">Todays Predictions</NavLink>
+        <NavLink to="/get-date" activeClassName="Link" class="Link">Predictions By Date</NavLink>
         <hr />
     </header>
 );

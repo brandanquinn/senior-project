@@ -34,7 +34,11 @@ exports.convert_prediction = (game_pred) => {
 
     let prediction_message;
 
-    if (get(game_pred, 'predicted-outcome') == 'W') {
+    // If point differential rounds to 0, NBA games cannot tie - therefore I've decided to alert the user that the game was too close for 
+    // either outcome to be probable.
+    if (Math.round(get(game_pred, 'predicted-pointdiff')) == 0) {
+        prediction_message = 'Too close to call.';
+    } else if (get(game_pred, 'predicted-outcome') == 'W') {
         prediction_message = get(game_pred, 't1') + ' will win by: ' + Math.round(get(game_pred, 'predicted-pointdiff')) + 'pts';
     } else {
         prediction_message = get(game_pred, 't2') + ' will win by: ' + (-1 * Math.round(get(game_pred, 'predicted-pointdiff'))) + 'pts';   

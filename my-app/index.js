@@ -1,5 +1,6 @@
 const express = require('express');
 const request = require('request');
+const bodyParser = require('body-parser');
 
 const get = require('lodash/get');
 
@@ -36,6 +37,9 @@ app.get('/todays-games', (req, res) => {
     })
     
 });
+
+// var jsonParser = bodyParser.json()
+
 /**
  * '/predict-by-date'
  * 
@@ -56,26 +60,19 @@ app.get('/todays-games', (req, res) => {
  * DATE
  *  2/6/19 5:42pm 
  */
-app.get('/predict-by-date', (req, res) => {
-    let date = req.query.date;
+app.post('/predict-by-date', (req, res) => {
+    let date = req.headers.referer.slice(-8);
+    console.log("DATE: ", date);
     // If date not passed as a query param, get todays games.
-    if (!date) {
-        request
-        .get('http://127.0.0.1:5000/predict')
-        .on('data', (chunk) => {
-            const predictions_json = chunk.toString()
-            const converted_predictions = predictions_json.map(pred => convert_prediction(pred));
-            res.send(converted_predictions);
-        })
-    } else {
-        request
+    request
         .post('http://127.0.0.1:5000/predict', { json: {date}})
         .on('data', (chunk) => {
-            const predictions_json = chunk.toString()
-            const converted_predictions = predictions_json.map(pred => convert_prediction(pred));
+            console.log(chunk.toString());
+            const predictions_json = chunk.toString();
+            const converted_predictions = get(JSON.parse(predictions_json), 'predictions').map(pred => convert_prediction(pred));
+            console.log(converted_predictions);
             res.send(converted_predictions);
         })
-    }
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
