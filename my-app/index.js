@@ -61,11 +61,20 @@ app.get('/todays-games', (req, res) => {
  *  2/6/19 5:42pm 
  */
 app.post('/predict-by-date', (req, res) => {
-    let date = req.headers.referer.slice(-8);
-    console.log("DATE: ", date);
-    // If date not passed as a query param, get todays games.
-    request
-        .post('http://127.0.0.1:5000/predict', { json: {date}})
+    // let date = req.headers.referer.slice(-8);
+    let body = '';
+    req.on('data', chunk => {
+        body += chunk.toString(); // convert Buffer to string
+    });
+    req.on('end', () => {
+        console.log(body);
+        // res.end('ok');
+
+        let date = get(JSON.parse(body), 'date');
+
+        console.log('DATE IS: ', date);
+        request
+        .post('http://127.0.0.1:5000/predict', { json: { date }})
         .on('data', (chunk) => {
             console.log(chunk.toString());
             const predictions_json = chunk.toString();
@@ -73,6 +82,11 @@ app.post('/predict-by-date', (req, res) => {
             console.log(converted_predictions);
             res.send(converted_predictions);
         })
+    })
+    
+    
+    // If date not passed as a query param, get todays games.
+    
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

@@ -305,7 +305,7 @@ def load_dataset(file_name):
     #   each line to lists in order to process through model.
 
     #   The statistics used currently for training/testing are differences in
-    #       - points
+    #       - home/away
     #       - field goal percentage
     #       - 3 point shot percentage
     #       - offensive rebounds

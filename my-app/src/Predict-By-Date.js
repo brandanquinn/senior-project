@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import get from 'lodash/get';
 import logo from './logo.svg';
 import './App.css';
+import { convert_date } from './utils/date-manip';
 
 class PredictByDate extends Component {
     constructor(props) {
@@ -11,18 +12,39 @@ class PredictByDate extends Component {
         };
     }
     
-    get_params = (location) => {
+    /**
+     * NAME:
+     *  get_params
+     *  - Pulls the date query param from URL and constructs an object with it.
+     * 
+     * SUMMARY:
+     *  - Constructs a URLSearchParams object using current window URL.
+     *  - Get date key from urlParams object and return it as an object.
+     * 
+     * AUTHOR:
+     *  Brandan Quinn
+     * 
+     * DATE:
+     *  4/18/19 12:34pm
+     */
+    get_params = () => {
         var urlParams = new URLSearchParams(window.location.search);
+
         return {
-            query: urlParams.get('date') || '',
+            query: convert_date(urlParams.get('date')) || '',
         };
     }
   
   componentDidMount() {
-    fetch('/predict-by-date', {method: 'POST', headers: { 'date': get(this.get_params(), 'query')}})
-      .then(res => res.json())
-      .then(game_predictions => this.setState( {game_predictions} ));
-  }
+    fetch('/predict-by-date', {
+        method: 'POST',
+        body: JSON.stringify({
+            date: get(this.get_params(), 'query')
+        })
+    })
+    .then(res => res.json())
+    .then(game_predictions => this.setState( {game_predictions} ));
+}
 
     
 
@@ -61,6 +83,7 @@ class PredictByDate extends Component {
 
     return (
       <div>
+        <p>Date of games: {get(this.get_params(), 'query')}</p>
         <div class="wrapper">
           {this.state.game_predictions ? <PredictBox game_preds={this.state.game_predictions}/> : "Loading"}
         </div>
