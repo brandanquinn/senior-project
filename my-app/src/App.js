@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Header from './Header';
 import get from 'lodash/get';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {

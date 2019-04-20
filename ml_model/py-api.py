@@ -14,7 +14,6 @@ persistent_model = train_model()
 @app.route('/predict', methods=['GET', 'POST'])
 def predict_games():
     predictions_to_return = {}
-
     print('Receiving: ', request.method, ' request from API.')
 
     if request.method == 'GET':

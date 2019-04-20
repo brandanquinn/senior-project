@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import get from 'lodash/get';
-import logo from './logo.svg';
 import './App.css';
 
 

@@ -376,6 +376,10 @@ def get_predictions(model):
     live_data = [live_teams, live_opponents, live_stats, live_labels]
     recent_games = np.array(live_stats)
 
+    # If no games are played at given date, return empty list.
+    if recent_games.size == 0:
+        return []
+
     game_predict = model.predict(recent_games).flatten()
 
     game_df = pd.DataFrame(live_stats, columns=column_names)
