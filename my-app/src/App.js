@@ -17,6 +17,14 @@ class App extends Component {
     return (
       <div>
         <Header />
+        <p>Welcome to QML NBA Predictions developed by Brandan Quinn!</p>
+        <p>This web application was built to provide NBA game predictions based on point differential.</p>
+        <p>These predictions are generated using a Neural Network provided by Tensorflow's Keras API: </p>
+        <a href="https://keras.io/getting-started/functional-api-guide/">Here is a link to the Keras docs.</a>
+        <p>If you click on the link to Today's Predictions in the menubar you will be greeted with predictions for each game played today.</p>
+        <p>If no games appear, it is likely that there are no NBA basketball games played on that date.</p>
+        <p>Similarly, if you select Predictions By Date, you will be able to input a date. Once the date is selected, you will be redirected to view the predictions at that date.</p>
+        <hr /> 
       </div>
     );
   }
