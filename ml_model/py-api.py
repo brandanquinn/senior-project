@@ -1,3 +1,7 @@
+# Brandan Quinn
+# Senior Project
+# Flask API
+
 from flask import Flask
 from flask import request
 from flask import jsonify
@@ -11,6 +15,15 @@ from model import get_predictions
 
 persistent_model = train_model()
 
+"""
+    Defines functionality for '/predict' endpoint. 
+    If GET request is received, gets season averages for each game played at todays date, processes the data through model,
+    and returns list of predictions.
+    If POST request is received, gets season averages for each game played at given date, processes the data through model, 
+    and returns list of predictions.
+
+    :return: Returns JSON response containing list of predictions.
+"""
 @app.route('/predict', methods=['GET', 'POST'])
 def predict_games():
     predictions_to_return = {}
