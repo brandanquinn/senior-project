@@ -282,6 +282,12 @@ def predict(date):
         2/5/19 4:05pm
     """
 
+    # If user inputs a year before 2000, do nothing.
+    year = date[:4]
+    
+    if int(year) < 2000:
+        return
+
     # date = get_todays_date()
     game_list = get_game_list(date)
 
