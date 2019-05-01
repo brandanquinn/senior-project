@@ -27,6 +27,7 @@ const Header = () => (
         <NavLink to="/" activeClassName="Link" class="Link" exact={true}>Home Page</NavLink>
         <NavLink to="/todays-games" activeClassName="Link" class="Link">Todays Predictions</NavLink>
         <NavLink to="/get-date" activeClassName="Link" class="Link">Predictions By Date</NavLink>
+        <NavLink to="/matchup-prediction" activeClassName="Link" class="Link">Matchup Prediction</NavLink>
         <hr />
     </header>
 );

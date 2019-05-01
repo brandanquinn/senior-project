@@ -89,4 +89,44 @@ app.post('/predict-by-date', (req, res) => {
     
 })
 
+/**
+ * '/matchup-predict'
+ * 
+ * NAME
+ *  '/matchup-predict'
+ * 
+ * DESCRIPTION
+ *  Sets up '/matchup-predict' route for web app to send a POST request with two team IDs to python ML model.
+ *  The model then returns a prediction of a matchup between those two teams as a response.
+ *  These JSON responses are just printed to the web page without formatting for now.
+ * 
+ *  Date string is currently sent as a query parameter.
+ *  If query param is not sent, defaults to todays date.
+ * 
+ * AUTHOR
+ *  Brandan Quinn
+ * 
+ * DATE
+ *  5/1/19 4:34pm 
+ */
+app.post('/matchup-predict', (req, res) => {
+    let body = '';
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+    req.on('end', () => {
+        let t1 = get(JSON.parse(body), 't1');
+        let t2 = get(JSON.parse(body), 't2');
+
+        request
+        .post('http://127.0.0.1:5000/matchup', { json: { t1, t2 }})
+        .on('data', (chunk) => {
+            const predictions_json = chunk.toString();
+            const converted_predictions = get(JSON.parse(predictions_json), 'predictions').map(pred => convert_prediction(pred));
+            console.log(converted_predictions);
+            res.send(converted_predictions);
+        })
+    });
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

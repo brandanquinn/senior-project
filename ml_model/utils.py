@@ -298,3 +298,38 @@ def predict(date):
         game_id = game.get('gameId')
         print('Checking game with id: ', game_id)
         get_stats(game, date, game_id, home_team, away_team, 'predict')
+
+def predict_matchup(home_team_id, away_team_id):
+    """
+        Called by Flask API to get a prediction based on matchup selected by user.
+        Gets season averages for each team and writes them to prediction csv file to be processed by model.
+
+        :param home_team_id: ID used to get home team statistics from NBA API
+        :param away_team_id: ID used to get away team statistics from NBA API
+        :return: Returns nothing
+
+        - Brandan Quinn
+        5/1/19 4:41pm
+    """
+    season_stats = requests.get('http://data.nba.net/prod/v1/2018/team_stats_rankings.json')
+    team_stats_list = season_stats.json().get('league').get('standard').get('regularSeason').get('teams')
+    # print("TEAM STATS LIST", team_stats_list)
+    home_team_stats = find_team_stats(home_team_id, team_stats_list)
+    # print("HOME TEAM STATS", home_team_stats)
+    away_team_stats = find_team_stats(away_team_id, team_stats_list)
+
+    home_team = get_team_name(home_team_id)
+    away_team = get_team_name(away_team_id)
+
+    save_data(home_team, home_team_stats, away_team, away_team_stats, "predict")
+
+
+def get_team_name(team_id):
+    teams = requests.get('http://data.nba.net/').json().get('sports_content').get('teams').get('team')
+    
+    for team in teams:
+        if team['team_id'] == int(team_id):
+            print("TEAM FOUND:", team['team_abbrev'])
+            return team['team_abbrev']
+
+    # print("Teams list: ", teams)

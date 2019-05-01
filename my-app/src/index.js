@@ -7,6 +7,7 @@ import TodaysGames from './Todays-Games';
 import * as serviceWorker from './serviceWorker';
 import GetDate from './Get-Date';
 import PredictByDate from './Predict-By-Date'
+import MatchupPrediction from './MatchupPrediction';
 
 const routing = (
     <Router>
@@ -15,6 +16,7 @@ const routing = (
         <Route path="/todays-games" component={TodaysGames} />
         <Route path="/get-date" component={GetDate} />
         <Route path="/predict-by-date" component={PredictByDate} />
+        <Route path="/matchup-prediction" component={MatchupPrediction} />
         </div>
     </Router>
 )

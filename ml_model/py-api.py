@@ -23,6 +23,9 @@ persistent_model = train_model()
     and returns list of predictions.
 
     :return: Returns JSON response containing list of predictions.
+
+    - Brandan Quinn
+    2/4/19 3:42pm
 """
 @app.route('/predict', methods=['GET', 'POST'])
 def predict_games():
@@ -38,5 +41,26 @@ def predict_games():
         print('Date received: ', date_string)
         utils.predict(date_string)
         predictions_to_return = get_predictions(persistent_model)
+
+    return jsonify(predictions=predictions_to_return)
+
+"""
+    Defines functionality for '/matchup' endpoint.
+    If request is received, gets season averages for the teams sent in the body of the request.
+    Processes this data through the model and returns prediction for matchup to web app.
+
+    :return: Returns JSON response containing prediction.
+
+    - Brandan Quinn
+    5/1/19 5:30pm
+"""
+@app.route('/matchup', methods=['POST'])
+def predict_matchup():
+    predictions_to_return = {}
+
+    t1 = request.get_json().get('t1')
+    t2 = request.get_json().get('t2')
+    utils.predict_matchup(t1, t2)
+    predictions_to_return = get_predictions(persistent_model)
 
     return jsonify(predictions=predictions_to_return)
