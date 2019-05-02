@@ -1,6 +1,10 @@
 body {
-  margin: 40px;
-  background-color: #102e4a;
+  /* margin: 40px; */
+  background-color: #36454f;
+  border-style: solid;
+  border-width: 5px;
+  border-color: #191919;
+  padding: 10px;
   color: white;
 }
 
@@ -8,20 +12,27 @@ body {
   display: flex;                       /* establish flex container */
   flex-wrap: wrap;                     /* enable flex items to wrap */
   justify-content: space-around;
-  background-color: #102e4a;
+  background-color: #191919;
   color: #444;
 }
 
 .box {
   flex: 0 0 32%;                       /* don't grow, don't shrink, width */
   height: 90px;
-  margin-bottom: 5px;
-  background-color: #5887ff;
+  border-style: solid;
+  border-width: 5px;
+  border-color: #191919;
+  padding: 10px;
+  background-color: #36454f;
   color: white;
 }
 
 .box:nth-child(3n) {
-  background-color: #5887ff;
+  background-color: #36454f;
+  border-style: solid;
+  border-width: 5px;
+  border-color: #191919;
+  padding: 10px;
   color: white;
 }
 
@@ -30,7 +41,7 @@ body {
 }
 
 .Sitename {
-  color: #55c1ff;
+  color: #4b5f6d;
 }
 
 .Navbar {
@@ -39,7 +50,16 @@ body {
 
 .Link {
   padding: 10px;
-  color:#a682ff;
+  color:#4b5f6d;
+}
+
+.headbox {
+  background-color: #191919;
+}
+
+footer {
+  background-color: black;
+  height: 300px;
 }
 
 @keyframes App-logo-spin {
