@@ -6,7 +6,7 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 import utils
 
@@ -14,6 +14,12 @@ from model import train_model
 from model import get_predictions
 
 persistent_model = train_model()
+
+@application.route('/')
+def default():
+    utils.predict(utils.get_todays_date())
+    predictions_to_return = get_predictions(persistent_model)
+    return jsonify(predictions=predictions_to_return) 
 
 """
     Defines functionality for '/predict' endpoint. 
@@ -27,7 +33,7 @@ persistent_model = train_model()
     - Brandan Quinn
     2/4/19 3:42pm
 """
-@app.route('/predict', methods=['GET', 'POST'])
+@application.route('/predict', methods=['GET', 'POST'])
 def predict_games():
     predictions_to_return = {}
     print('Receiving: ', request.method, ' request from API.')
@@ -47,14 +53,14 @@ def predict_games():
 """
     Defines functionality for '/matchup' endpoint.
     If request is received, gets season averages for the teams sent in the body of the request.
-    Processes this data through the model and returns prediction for matchup to web app.
+    Processes this data through the model and returns prediction for matchup to web application.
 
     :return: Returns JSON response containing prediction.
 
     - Brandan Quinn
     5/1/19 5:30pm
 """
-@app.route('/matchup', methods=['POST'])
+@application.route('/matchup', methods=['POST'])
 def predict_matchup():
     predictions_to_return = {}
 

@@ -7,7 +7,8 @@ class MatchupPrediction extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      game_predictions: undefined
+      game_predictions: undefined,
+      warning: false
     };
 
     // this.handleChange = this.handleChange.bind(this);
@@ -36,15 +37,20 @@ class MatchupPrediction extends Component {
     let t1_id = t1.options[t1.selectedIndex].value;
     let t2_id = t2.options[t2.selectedIndex].value;
 
-    fetch('/matchup-predict', {
-        method: 'POST',
-        body: JSON.stringify({
-            t1: t1_id,
-            t2: t2_id
-        })
-    })
-    .then(res => res.json())
-    .then(game_predictions => this.setState( {game_predictions} ));
+    // If the same teams are selected, don't waste time sending request.
+    if (t1_id !== t2_id) {
+      fetch('/matchup-predict', {
+          method: 'POST',
+          body: JSON.stringify({
+              t1: t1_id,
+              t2: t2_id
+          })
+      })
+      .then(res => res.json())
+      .then(game_predictions => this.setState( {game_predictions, warning: false} ));
+    } else {
+      this.setState( {warning: true})
+    }
     // console.log(document.getElementById("t1"))
   }
 
@@ -138,10 +144,12 @@ class MatchupPrediction extends Component {
         <TeamSelect id="t2"/>
 
         <button onClick={this.handleOnClick}>Get Prediction</button>
+        {this.state.warning && "Please select two different teams."}
 
         <hr />
 
         {this.state.game_predictions ? <PredictBox game_preds={this.state.game_predictions}/> : "Select a matchup and submit."}
+
       </div>
     );
   }
