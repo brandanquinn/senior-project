@@ -357,11 +357,4 @@ def train_model():
 
     print(df_elements)
 
-    # Testing recent games as well as a prediction for a game tonight.
-
-    # user_input = input("Would you like to see the predictions for today's games?")
-
-    # if user_input == "yes":
-    #     get_predictions(model)
-
     return model

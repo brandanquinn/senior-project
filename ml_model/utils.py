@@ -49,7 +49,10 @@ def get_game_list(date_string):
 
     response = requests.get('http://data.nba.net/10s/prod/v1/' + date_string + '/scoreboard.json')
 
-    return response.json().get('games')
+    if response.status_code == 200:
+        return response.json().get('games')
+    else:
+        return []
 
 def generate_row_for_games_played(home_team, home_team_totals, away_team, away_team_totals):
     """
@@ -284,9 +287,13 @@ def predict(date):
 
     # If user inputs a year before 2000, do nothing.
     year = date[:4]
+    # If user inputs a month thats outside the basketball season, do nothing.
+    month = date[4:6]
     
-    if int(year) < 2000:
-        return
+    # if int(year) < 2000:
+    #     return
+    # elif int(month) > 7 and int(month) < 11:
+    #     return
 
     # date = get_todays_date()
     game_list = get_game_list(date)
