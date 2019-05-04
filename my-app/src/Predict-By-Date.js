@@ -73,9 +73,12 @@ class PredictByDate extends Component {
       <>
         {game_preds.length === 0 && <p>No games played today.</p>}
         {game_preds.map(game_pred => (
-          <div class="box">
+          <div class={get(game_pred, 'is-outcome-correct') ? "box Correct" : "box Incorrect"}>
             <div class="teams" key={get(game_pred, 'playing')}>{get(game_pred, 'playing')}</div>
             <div class="outcome" key={get(game_pred, 'prediction-message')}>{get(game_pred, 'prediction_message')}</div>
+            <hr/>
+            {get(game_pred, 'actual_result') && 
+            <div key={get(game_pred, "actual_result")}>{get(game_pred, 'actual_result')}</div>}
           </div>
         ))}
       </>

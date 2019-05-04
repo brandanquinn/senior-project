@@ -42,6 +42,7 @@ def predict_games():
         print('Date received: ', date_string)
         utils.predict(date_string)
         predictions_to_return = get_predictions(persistent_model)
+        predictions_to_return = utils.assess_accuracy(date_string, predictions_to_return)
 
     return jsonify(predictions=predictions_to_return)
 
