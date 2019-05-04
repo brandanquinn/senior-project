@@ -7,7 +7,8 @@ class PredictByDate extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        game_predictions: undefined
+        game_predictions: undefined,
+        class_name: ""
         };
     }
     
@@ -33,6 +34,33 @@ class PredictByDate extends Component {
             query: convert_date(urlParams.get('date')) || '',
         };
     }
+
+    /**
+     * NAME:
+     *  change_class_name
+     *  - If game predictions from date selected are for games that have already been played, change div classname to style PredictBoxes differently.
+     * 
+     * PARAMS:
+     *  is_old_pred, Undefined / false if game has not been played yet.
+     *  is_outcome_correct, Boolean value determining whether or not predicted outcome was correct.
+     * 
+     * SUMMARY:
+     *  - If prediction is for game that has already been played, change class name var to reflect whether predicted outcome was correct.
+     *  - Else: Reset class name var to empty string so that no additional css styles are added.
+     * 
+     * AUTHOR:
+     *  - Brandan Quinn
+     * 
+     * DATE:
+     *  5/4/19 2:36pm 
+     */
+    change_class_name = (is_old_pred, is_outcome_correct) => {
+      if (is_old_pred) {
+        is_outcome_correct ? this.class_name = "Correct" : this.class_name = "Incorrect";
+      } else {
+        this.class_name = "";
+      }
+    }
   
   componentDidMount() {
     fetch('/predict-by-date', {
@@ -43,9 +71,7 @@ class PredictByDate extends Component {
     })
     .then(res => res.json())
     .then(game_predictions => this.setState( {game_predictions} ));
-}
-
-    
+  } 
 
   render() {
     /**
@@ -73,12 +99,15 @@ class PredictByDate extends Component {
       <>
         {game_preds.length === 0 && <p>No games played today.</p>}
         {game_preds.map(game_pred => (
-          <div class={get(game_pred, 'is-outcome-correct') ? "box Correct" : "box Incorrect"}>
+          <div>
+            {this.change_class_name(get(game_pred, 'actual_result'), get(game_pred, 'is-outcome-correct'))}
+            <div class={"box " + this.class_name}>
             <div class="teams" key={get(game_pred, 'playing')}>{get(game_pred, 'playing')}</div>
             <div class="outcome" key={get(game_pred, 'prediction-message')}>{get(game_pred, 'prediction_message')}</div>
             <hr/>
             {get(game_pred, 'actual_result') && 
             <div key={get(game_pred, "actual_result")}>{get(game_pred, 'actual_result')}</div>}
+          </div>
           </div>
         ))}
       </>
